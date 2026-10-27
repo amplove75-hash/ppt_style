@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="대상에 맞는 PPT 교안 스타일을 골라 AI가 따라 쓰는 SKILL.md로 만드는 5단계 워크샵">
+<title>교안 스타일 노선도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Jua&family=Do+Hyeon&family=Gowun+Dodum&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Myeongjo:wght@400;700;800&family=Nanum+Gothic:wght@400;700;800&family=Nanum+Pen+Script&family=Gothic+A1:wght@400;600;800;900&family=Hahmlet:wght@400;700&family=Gaegu:wght@400;700&display=swap">
+<style>
+/* Layout: a transit line map of five stations; guide panel left, work board right; slide previews rendered live from the style being built. */
+:root{
+  --paper:#EEF1EE; --card:#FFFFFF; --ink:#18202E; --mute:#5B6676; --rule:#D3D9D4; --field:#F7F8F6;
+  --c1:#2563C9; --c2:#C2410C; --c3:#13875C; --c4:#7A45C9; --c5:#9A6A07;
+  --ok:#13875C; --warn:#B4520F; --warnbg:#FCEFE3;
+  --md-bg:#141A24; --md-fg:#DCE3EE;
+  --ac:var(--c1);
+  --f-display:"Black Han Sans","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10141B; --card:#19202B; --ink:#E7ECF3; --mute:#9AA5B5; --rule:#2B3442; --field:#141A23;
+  --c1:#6C9EF0; --c2:#F0895A; --c3:#4CC594; --c4:#AE88EE; --c5:#D9AE4E;
+  --ok:#4CC594; --warn:#F2A15F; --warnbg:#3A2716; --md-bg:#0B0F15; --md-fg:#DCE3EE; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10141B; --card:#19202B; --ink:#E7ECF3; --mute:#9AA5B5; --rule:#2B3442; --field:#141A23;
+  --c1:#6C9EF0; --c2:#F0895A; --c3:#4CC594; --c4:#AE88EE; --c5:#D9AE4E;
+  --ok:#4CC594; --warn:#F2A15F; --warnbg:#3A2716; --md-bg:#0B0F15; --md-fg:#DCE3EE; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+h1,h2,h3{text-wrap:balance;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto}
+.ac-soft{background:color-mix(in srgb,var(--ac) 10%,var(--card))}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--paper);border-bottom:1px solid var(--rule);
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px))}
+.top .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.logo{width:34px;height:34px;border-radius:7px;border:5px solid var(--ink);display:grid;place-items:center;flex:none}
+.logo i{width:12px;height:7px;border-radius:1px;background:var(--ac)}
+.brand b{font-family:var(--f-display);font-size:20px;font-weight:400;letter-spacing:.02em}
+.brand small{display:block;color:var(--mute);font-size:12px;line-height:1.2}
+.stat{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+#saved{opacity:0;transition:opacity .3s;color:var(--ok);font-weight:600}
+#saved.on{opacity:1}
+#pct{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink);font-weight:500}
+#me{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--ink)}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+
+.btn{border:0;background:var(--ac);color:#fff;padding:9px 16px;border-radius:6px;font-weight:600;font-size:14px;line-height:1.3}
+:root[data-theme="dark"] .btn{color:#10141B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#10141B}}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--ac);color:var(--ac)}
+.btn.ink{background:var(--ink);color:var(--paper)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.in{width:100%;border:1px solid var(--rule);background:var(--field);color:var(--ink);border-radius:6px;padding:9px 11px;font:inherit;font-size:14px;min-width:0}
+.in:focus{border-color:var(--ac);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 18%,transparent)}
+textarea.in{resize:vertical;line-height:1.55}
+.in.sm{padding:6px 8px;font-size:13px}
+
+.map{margin:22px 0 18px;overflow-x:auto;padding:4px 2px 6px}
+.line{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));min-width:620px;position:relative}
+.line::before{content:"";position:absolute;left:10%;right:10%;top:23px;height:8px;border-radius:4px;background:var(--rule)}
+.line .run{position:absolute;left:10%;top:23px;height:8px;border-radius:4px;background:var(--ac);transition:width .4s}
+.stn{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:1;padding:0 4px}
+.stn .dot{width:54px;height:54px;border-radius:50%;background:var(--card);border:6px solid var(--sc);display:grid;place-items:center;font-family:var(--f-display);font-size:18px;color:var(--sc);transition:transform .2s}
+.stn.done .dot{background:var(--sc);color:var(--card)}
+.stn.cur .dot{transform:scale(1.12);box-shadow:0 0 0 5px color-mix(in srgb,var(--sc) 22%,transparent)}
+.stn .nm{font-weight:700;font-size:14px}
+.stn .sub{font-size:12px;color:var(--mute);margin-top:-6px}
+
+.main{display:grid;grid-template-columns:330px minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.guide{position:sticky;top:calc(env(safe-area-inset-top,0px) + 78px);display:flex;flex-direction:column;gap:12px}
+@media (max-width:900px){.guide{position:static}}
+.master{display:flex;align-items:center;gap:12px}
+.av{width:58px;height:58px;border-radius:50%;background:var(--ac);color:var(--card);display:grid;place-items:center;font-family:var(--f-display);font-size:24px;flex:none;position:relative}
+.av::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px dashed var(--ac);opacity:.5}
+.master small{color:var(--mute);font-size:12px;display:block}
+.master b{font-size:17px}
+.bubble{background:var(--card);border:1px solid var(--rule);border-radius:4px 14px 14px 14px;padding:14px 16px;font-size:14px;line-height:1.7}
+.bubble b{color:var(--ac)}
+.todo{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:12px 14px}
+.todo h4{margin:0 0 8px;display:flex;justify-content:space-between;font-size:13px;color:var(--mute);font-weight:600}
+.todo h4 span:last-child{font-family:var(--f-mono);color:var(--ink)}
+.todo ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.todo li{display:flex;align-items:center;gap:9px;padding:6px;border-radius:6px;cursor:pointer;font-size:14px}
+.todo li:hover{background:var(--field)}
+.todo li i{width:16px;height:16px;border-radius:50%;border:2px solid var(--rule);flex:none}
+.todo li.y{color:var(--mute)}
+.todo li.y i{background:var(--ok);border-color:var(--ok);box-shadow:inset 0 0 0 3px var(--card)}
+.todo li em{margin-left:auto;font-style:normal;font-size:11px;color:var(--ac);font-weight:700}
+.tips{border:1px dashed var(--rule);border-radius:10px;padding:10px 14px;font-size:13.5px}
+.tips summary{cursor:pointer;font-weight:600;color:var(--mute)}
+.tips ul{margin:8px 0 2px;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.mini{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.mini small{font-size:12px;color:var(--mute);font-weight:600}
+
+.work{background:var(--card);border:1px solid var(--rule);border-radius:12px;overflow:hidden;min-width:0}
+.wh{display:flex;gap:14px;align-items:center;padding:18px 22px;border-bottom:4px solid var(--ac);flex-wrap:wrap}
+.wh .no{font-family:var(--f-display);font-size:34px;color:var(--ac);line-height:1}
+.wh h2{font-family:var(--f-display);font-weight:400;font-size:24px}
+.wh p{margin:2px 0 0;color:var(--mute);font-size:14px}
+.wh .time{margin-left:auto;font-size:12px;color:var(--mute);border:1px solid var(--rule);padding:4px 10px;border-radius:99px;white-space:nowrap}
+.wb{padding:20px 22px 8px;display:flex;flex-direction:column;gap:16px}
+@media (max-width:520px){.wb{padding:16px 14px 8px}.wh{padding:16px 14px}}
+.foot{display:flex;align-items:center;gap:12px;padding:16px 22px 20px;border-top:1px solid var(--rule);flex-wrap:wrap}
+#gate{flex:1;font-size:13px;color:var(--warn);min-width:160px}
+#gate.ok{color:var(--ok)}
+.sec{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px;padding-top:12px;border-top:1px solid var(--rule)}
+.wb>.sec:first-child,.wb>.al+.sec{border-top:0;padding-top:0}
+.sec b{font-size:16px}
+.sec span:not(.tag){color:var(--mute);font-size:13px}
+.tag{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--card);background:var(--ac);padding:2px 8px;border-radius:3px}
+.fld{display:flex;flex-direction:column;gap:6px;border-radius:8px;min-width:0}
+.lab{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.req{font-style:normal;font-size:11px;color:var(--ac);border:1px solid var(--ac);padding:0 6px;border-radius:3px;font-weight:700}
+.help{margin:0;color:var(--mute);font-size:13px}
+.ex{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ex>span{font-size:11px;color:var(--mute);font-weight:700;letter-spacing:.06em;margin-right:2px}
+.chip{border:1px dashed color-mix(in srgb,var(--ac) 55%,var(--rule));background:transparent;border-radius:99px;padding:3px 11px;font-size:12.5px;color:var(--ac)}
+.chip:hover{background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.chip.used{border-style:solid;color:var(--mute);border-color:var(--rule)}
+.chip small{margin-left:4px;opacity:.7}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.g2,.g3{grid-template-columns:minmax(0,1fr)}}
+.al{padding:10px 14px;border-radius:8px;font-size:14px}
+.al.w{background:var(--warnbg);color:var(--warn)}
+.al.o{background:color-mix(in srgb,var(--ac) 10%,var(--card))}
+.empty{padding:18px;border:1px dashed var(--rule);border-radius:8px;color:var(--mute);text-align:center;font-size:14px}
+.pulse{animation:pulse 1.2s ease}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 transparent}30%{box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 35%,transparent)}}
+
+/* choice tiles */
+.tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:760px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{border:1px solid var(--rule);background:var(--field);border-radius:10px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.tile b{font-size:16px}
+.tile small{color:var(--mute);font-size:12px;line-height:1.4}
+.tile.on{border:2px solid var(--ac);padding:11px;background:color-mix(in srgb,var(--ac) 9%,var(--card))}
+.tile.on b{color:var(--ac)}
+.subs{display:flex;flex-wrap:wrap;gap:8px}
+.sub{border:1px solid var(--rule);background:var(--card);border-radius:99px;padding:6px 14px;font-size:14px}
+.sub.on{background:var(--ac);border-color:var(--ac);color:var(--card);font-weight:600}
+.specs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:640px){.specs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.spec{border:1px solid var(--rule);border-radius:8px;padding:10px 12px}
+.spec small{display:block;font-size:12px;color:var(--mute)}
+.spec b{font-family:var(--f-mono);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
+
+/* presets */
+.pgroup{display:flex;flex-direction:column;gap:8px}
+.pgroup>small{font-size:12px;font-weight:700;color:var(--mute);letter-spacing:.04em}
+.presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.presets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pre{border:1px solid var(--rule);background:var(--card);border-radius:10px;padding:8px;text-align:left;display:flex;flex-direction:column;gap:6px}
+.pre.on{border:2px solid var(--ac);padding:7px}
+.pre b{font-size:14px}
+.pre small{font-size:12px;color:var(--mute);line-height:1.35}
+.sw{display:flex;gap:3px}
+.sw i{width:14px;height:14px;border-radius:3px;border:1px solid var(--rule)}
+.colors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.colors{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.col{display:flex;align-items:center;gap:8px;border:1px solid var(--rule);border-radius:8px;padding:6px 8px;min-width:0}
+.col input[type=color]{width:34px;height:30px;border:0;padding:0;background:none;flex:none;cursor:pointer}
+.col span{font-size:13px;font-weight:600;display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.col span small{font-family:var(--f-mono);font-weight:400;color:var(--mute);font-size:11.5px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{border:1px solid var(--rule);background:var(--field);border-radius:8px;padding:7px 12px;font-size:13.5px;font-weight:600}
+.seg button.on{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,var(--card));color:var(--ac)}
+.stage{border:1px solid var(--rule);border-radius:10px;padding:12px;background:var(--field);display:flex;flex-direction:column;gap:10px}
+.stage .seg button{padding:4px 10px;font-size:12.5px;font-weight:500}
+
+/* layouts */
+.lays{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.lays{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.lay{border:1px solid var(--rule);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;background:var(--card);text-align:left}
+.lay.on{border:2px solid var(--ac);padding:7px}
+.lay .lh{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600}
+.lay .lh i{width:18px;height:18px;border-radius:4px;border:2px solid var(--rule);flex:none;display:grid;place-items:center;font-style:normal;font-size:12px}
+.lay.on .lh i{background:var(--ac);border-color:var(--ac);color:var(--card)}
+.lay small{font-size:12px;color:var(--mute);line-height:1.4}
+.lnotes{display:flex;flex-direction:column;gap:8px}
+.lnote{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;align-items:center}
+.lnote b{font-size:13.5px}
+@media (max-width:560px){.lnote{grid-template-columns:minmax(0,1fr)}}
+
+/* slide preview: every size is in cqw so it scales with the frame */
+.sl{container-type:inline-size;aspect-ratio:16/9;width:100%;max-width:100%;position:relative;overflow:hidden;border-radius:6px;background:var(--s-bg);color:var(--s-tx);font-family:var(--s-fb);line-height:1.35;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sl *{box-sizing:border-box}
+.sli{position:absolute;inset:0;padding:5.5cqw 6cqw;display:flex;flex-direction:column;gap:2.2cqw;z-index:1}
+.sl .h{font-family:var(--s-ft);font-weight:var(--s-fw);color:var(--s-pr);font-size:4.6cqw;line-height:1.2;margin:0}
+.sl .hx{font-size:7cqw}
+.sl .lbl{font-size:1.9cqw;color:var(--s-acc);font-weight:700;letter-spacing:.06em}
+.sl .p{font-size:2.5cqw;margin:0}
+.sl .mu{color:var(--s-mu)}
+.sl .box{background:var(--s-sf);border-radius:var(--s-rd);padding:2cqw 2.4cqw;border:var(--s-bd)}
+.sl .row{display:flex;gap:2cqw;flex:1;min-height:0}
+.sl .row>*{flex:1;min-width:0}
+.sl ul{margin:0;padding-left:3cqw;font-size:2.5cqw;display:flex;flex-direction:column;gap:1cqw}
+.sl .n{display:inline-grid;place-items:center;width:4.2cqw;height:4.2cqw;border-radius:var(--s-rdc);background:var(--s-pr);color:var(--s-on);font-family:var(--s-ft);font-size:2.2cqw;flex:none}
+.sl .na{background:var(--s-acc);color:var(--s-ona)}
+.sl .li{display:flex;align-items:center;gap:1.6cqw;font-size:2.5cqw}
+.sl .ph{background:repeating-linear-gradient(135deg,var(--s-sf) 0 1.4cqw,color-mix(in srgb,var(--s-pr) 12%,var(--s-sf)) 1.4cqw 2.8cqw);border-radius:var(--s-rd);display:grid;place-items:center;font-size:2cqw;color:var(--s-mu)}
+.sl .bar{height:.8cqw;width:12cqw;background:var(--s-acc);border-radius:1cqw}
+.sl.fill{background:var(--s-pr);color:var(--s-on)}
+.sl.fill .h{color:var(--s-on)}
+.deco{position:absolute;inset:0;pointer-events:none;z-index:0}
+.sl.thumb{border-radius:4px}
+
+/* result */
+.result{margin-top:4px;border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.res-h{display:flex;gap:18px;align-items:center;padding:18px;flex-wrap:wrap}
+.ring{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;flex:none}
+.ring b{width:60px;height:60px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-family:var(--f-display);font-size:24px;font-weight:400}
+.res-h h3{font-family:var(--f-display);font-weight:400;font-size:20px}
+.res-h p{margin:2px 0 8px;color:var(--mute);font-size:14px}
+.res-h>div{flex:1;min-width:220px}
+.miss{display:flex;flex-wrap:wrap;gap:6px}
+.miss button{border:1px solid var(--rule);background:var(--warnbg);color:var(--warn);border-radius:99px;padding:3px 10px;font-size:12.5px}
+.res-prev{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0 18px 14px}
+@media (max-width:640px){.res-prev{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#md{margin:0;background:var(--md-bg);color:var(--md-fg);font-family:var(--f-mono);font-size:12.5px;line-height:1.65;padding:18px;max-height:420px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.res-btn{display:flex;gap:8px;flex-wrap:wrap;padding:14px 18px}
+.howto{padding:0 18px 18px;font-size:13.5px;color:var(--mute)}
+.howto b{color:var(--ink)}
+
+/* intro */
+#intro{position:fixed;inset:0;z-index:40;background:var(--paper);overflow:auto;
+  padding:calc(env(safe-area-inset-top,0px) + 28px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 28px) max(16px,env(safe-area-inset-left,0px))}
+.intro{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--mute)}
+.intro h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,6vw,50px);line-height:1.15}
+.intro h1 em{font-style:normal;color:var(--c2)}
+.lede{font-size:16px;max-width:62ch;margin:0;color:var(--mute)}
+.lede b{color:var(--ink)}
+.strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+@media (max-width:700px){.strip{grid-template-columns:repeat(2,minmax(0,1fr))}.strip>div:last-child{display:none}}
+.strip>div{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--mute);font-weight:600}
+.join{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+@media (max-width:680px){.join{grid-template-columns:minmax(0,1fr)}}
+.join .box{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.join .box>b{font-size:15px}
+.heroes{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:10px}
+.hero{border:2px solid var(--rule);background:var(--field);border-radius:10px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:600;font-size:14px}
+.hero.on{border-color:var(--ink);background:var(--card)}
+.hero svg{width:60px;height:60px}
+.cta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.cta .btn{padding:12px 22px;font-size:15px}
+.note{font-size:13px;color:var(--mute);margin:0}
+
+dialog{border:0;border-radius:14px;padding:0;background:var(--card);color:var(--ink);width:min(960px,calc(100vw - 32px));max-height:calc(100vh - 48px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+dialog.narrow{width:min(520px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(10,14,20,.5)}
+.dh{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--rule)}
+.dh h3{font-family:var(--f-display);font-weight:400;font-size:20px;margin-right:auto}
+.db{padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.dnote{margin:0;font-size:13px;color:var(--mute)}
+#libraryStatus{font-size:13.5px;color:var(--mute);margin:0}
+#libraryStatus.error{color:var(--warn)}
+.tblwrap{overflow-x:auto;border:1px solid var(--rule);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
+th{text-align:left;font-size:12px;color:var(--mute);font-weight:600;padding:9px 12px;background:var(--field);border-bottom:1px solid var(--rule)}
+td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.num-c{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+td.num-c{color:var(--mute)}
+.tlink{border:0;background:none;padding:0;font-weight:600;color:var(--c1);text-align:left}
+.tlink:hover{text-decoration:underline}
+.lvl{font-size:12px;border:1px solid var(--rule);border-radius:99px;padding:1px 8px;white-space:nowrap}
+.detail td{background:var(--field)}
+.detail p{margin:0 0 8px;font-size:13.5px}
+.dgrid{display:grid;grid-template-columns:240px minmax(0,1fr);gap:12px}
+@media (max-width:640px){.dgrid{grid-template-columns:minmax(0,1fr)}}
+.detail pre{margin:0;background:var(--md-bg);color:var(--md-fg);font-family:var(--f-mono);font-size:12px;padding:12px;border-radius:6px;max-height:300px;overflow:auto;white-space:pre-wrap}
+.frm{display:flex;flex-direction:column;gap:10px}
+.frm label{font-size:13px;font-weight:600;display:flex;flex-direction:column;gap:4px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+#publishError{color:var(--warn);font-size:13.5px;margin:0;min-height:1em}
+.df{display:flex;gap:8px;justify-content:flex-end;padding:0 20px 18px;flex-wrap:wrap}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);z-index:80;background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:8px;font-size:14px;max-width:calc(100vw - 32px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#tourBlock{position:fixed;inset:0;z-index:60}
+#spot{position:fixed;z-index:61;border-radius:10px;box-shadow:0 0 0 9999px rgba(10,14,20,.6);border:2px solid var(--ac);pointer-events:none;transition:all .25s}
+#tip{position:fixed;z-index:62;width:320px;max-width:calc(100vw - 20px);background:var(--card);color:var(--ink);border-radius:10px;padding:14px 16px;font-size:14px;box-shadow:0 12px 32px rgba(0,0,0,.3)}
+#tip .tn{font-size:12px;color:var(--ac);font-weight:700;margin-bottom:4px}
+#tip .tb{display:flex;justify-content:flex-end;gap:6px;margin-top:10px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+[hidden]{display:none!important}img{max-width:100%}
+</style>
+
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="brand"><span class="logo"><i></i></span><div><b>교안 스타일 노선도</b><small>대상에 맞는 PPT 교안 스타일을 스킬로 만드는 5개 역</small></div></div>
+  <div class="stat"><span id="saved">저장됨</span><span id="pct">전체 0%</span><span id="me"></span></div>
+  <div class="tools">
+    <button class="btn ghost sm" data-act="library">스타일 라이브러리</button>
+    <button class="btn ghost sm" data-act="demo">예시 보기</button>
+    <button class="btn ghost sm" data-act="tour">사용 안내</button>
+    <button class="btn ghost sm" data-act="reset">초기화</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="map"><div class="line" id="rail"></div></div>
+  <div class="main">
+    <aside class="guide" id="guide"></aside>
+    <section class="work" id="work"></section>
+  </div>
+</div>
+
+<div id="intro">
+  <div class="intro">
+    <div class="kicker">교사·강사를 위한 워크샵 · 약 60분 · 5개 역</div>
+    <h1>누구를 가르치느냐에 따라<br>슬라이드도 <em>달라져야</em> 해요</h1>
+    <p class="lede">초등 저학년부터 전문강사까지, 대상과 수업에 맞는 교안 스타일을 고르고 다듬으면 AI가 그대로 따라 만드는 <b>PPT 교안 스타일 SKILL.md</b>가 나와요. 색, 글꼴, 레이아웃, 글자 크기 규칙까지 한 장에 담아요.</p>
+    <div class="strip" id="introStrip"></div>
+    <div class="join">
+      <div class="box">
+        <b>어떻게 불러 드릴까요?</b>
+        <input class="in" id="iname" placeholder="이름 또는 닉네임 (선택)" maxlength="50">
+        <p class="note">적은 내용은 이 브라우저에 자동 저장돼요. 라이브러리에 공유를 누른 스타일만 다른 사람에게 보여요.</p>
+      </div>
+      <div class="box">
+        <b>함께 탈 승객 캐릭터를 골라 주세요</b>
+        <div class="heroes" id="heroes">
+          <button class="hero" data-hero="f" id="heroF"></button>
+          <button class="hero" data-hero="m" id="heroM"></button>
+        </div>
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn ink" data-act="start" id="startBtn">출발하기</button>
+      <button class="btn ghost" data-act="demo">예시로 먼저 둘러보기</button>
+      <span class="note">처음이면 출발 직후 짧은 화면 안내가 나와요.</span>
+    </div>
+  </div>
+</div>
+
+<dialog id="libraryDialog">
+  <div class="dh"><h3>공유된 교안 스타일</h3><button class="btn ghost sm" data-act="closeLibrary">닫기</button></div>
+  <div class="db">
+    <p class="dnote">작성자 이름은 공유한 사람이 직접 적은 값이에요. 스타일 이름을 누르면 미리보기와 SKILL.md를 볼 수 있어요.</p>
+    <div class="subs" id="libFilter"></div>
+    <input class="in" id="librarySearch" placeholder="작성자, 스타일 이름, 설명으로 찾기" aria-label="라이브러리 검색">
+    <p id="libraryStatus">라이브러리를 불러오는 중이에요.</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>작성자</th><th>스타일 이름</th><th>대상</th><th>등록일</th><th class="num-c">조회</th><th>파일</th></tr></thead>
+      <tbody id="libraryList"></tbody>
+    </table></div>
+  </div>
+</dialog>
+
+<dialog id="publishDialog" class="narrow">
+  <div class="dh"><h3 id="publishTitle">라이브러리에 공유하기</h3><button class="btn ghost sm" data-act="closePublish">닫기</button></div>
+  <form id="publishForm" class="db frm" novalidate>
+    <p class="dnote" id="publishHint">작성자 이름은 로그인으로 확인되지 않아요.</p>
+    <label>작성자 이름<input class="in" id="publishAuthor" maxlength="50" required></label>
+    <label>스타일 이름<input class="in" id="publishTitleInput" maxlength="120" required></label>
+    <label>설명<textarea class="in" id="publishDescription" rows="3" maxlength="500" required></textarea></label>
+    <div class="hp" aria-hidden="true"><label>웹사이트<input id="publishWebsite" tabindex="-1" autocomplete="off"></label></div>
+    <p class="dnote">작성자 이름과 스타일 내용은 라이브러리를 여는 사람 모두에게 보여요. 학생 이름 같은 개인 정보가 없는지 확인해 주세요.</p>
+    <p id="publishError" role="status"></p>
+  </form>
+  <div class="df">
+    <button class="btn ghost" id="downloadLocal" hidden>저장 없이 내려받기</button>
+    <button class="btn ghost" data-act="closePublish">취소</button>
+    <button class="btn" id="publishSubmit" form="publishForm" type="submit">공유하기</button>
+  </div>
+</dialog>
+
+<dialog id="askDialog" class="narrow">
+  <div class="db"><p id="askText" style="margin:6px 0 0;font-size:15px"></p></div>
+  <div class="df"><button class="btn ghost" id="askNo">취소</button><button class="btn" id="askYes">계속할게요</button></div>
+</dialog>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const att=s=>esc(s).replace(/\n/g,"&#10;");
+const lines=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const tr=s=>String(s||"").trim();
+const jo=(w,a,b)=>{const c=tr(w).slice(-1).charCodeAt(0);if(!(c>=0xAC00&&c<=0xD7A3))return w+a;return w+(((c-0xAC00)%28)?a:b);};
+const HEX=v=>/^#[0-9a-fA-F]{6}$/.test(String(v||""));
+
+const HERO={
+ f:{n:"승객 A",svg:`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="var(--c4)" opacity=".15"/><path d="M14 58c2-12 9-17 18-17s16 5 18 17z" fill="var(--c4)"/><path d="M18 30c0-11 6-17 14-17s14 6 14 17c0 6-1 11-3 14l-3-9H24l-3 9c-2-3-3-8-3-14z" fill="var(--ink)"/><circle cx="32" cy="29" r="10" fill="#F2C9A5"/><path d="M22 27c3-6 7-8 10-8 4 0 8 2 10 8-6-1-12-3-14-6-1 3-3 5-6 6z" fill="var(--ink)"/></svg>`},
+ m:{n:"승객 B",svg:`<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="var(--c1)" opacity=".15"/><path d="M14 58c2-12 9-17 18-17s16 5 18 17z" fill="var(--c1)"/><circle cx="32" cy="29" r="10" fill="#E9BC94"/><path d="M21 27c0-8 5-12 11-12s11 4 11 12c-3-3-7-4-11-4-5 0-8 1-11 4z" fill="var(--ink)"/><rect x="25" y="27" width="6" height="4" rx="1" fill="none" stroke="var(--ink)" stroke-width="1.4"/><rect x="33" y="27" width="6" height="4" rx="1" fill="none" stroke="var(--ink)" stroke-width="1.4"/></svg>`}};
+
+/* ───── 대상 ───── */
+const TONES=[{v:"haeyo",n:"해요체",d:"친근한 존댓말 (~해요)"},{v:"hapsyo",n:"합쇼체",d:"격식 있는 존댓말 (~합니다)"},{v:"gaejo",n:"개조식",d:"짧게 끊어 쓰기 (~함, ~임)"},{v:"mix",n:"섞어 쓰기",d:"제목은 개조식, 설명은 해요체"}];
+const ICONS=[{v:"many",n:"넉넉히",md:"아이콘과 그림 기호를 넉넉히 써서 글을 줄인다"},{v:"some",n:"핵심에만",md:"핵심 개념과 활동 안내에만 아이콘을 쓴다"},{v:"few",n:"최소로",md:"아이콘은 꼭 필요한 곳에만 최소로 쓴다"},{v:"none",n:"쓰지 않음",md:"아이콘과 이모티콘을 쓰지 않는다"}];
+const LEVELS=[
+ {k:"elem",n:"초등",d:"놀이처럼, 그림이 먼저",subs:[{k:"e12",n:"저학년 (1~2학년)"},{k:"e34",n:"중학년 (3~4학년)"},{k:"e56",n:"고학년 (5~6학년)"}],
+  topic:"물은 어디로 여행할까요?",subject:"과학 · 물의 순환",
+  spec:{titlePt:44,bodyPt:28,minPt:24,maxLines:3,maxChars:15,tone:"haeyo",icons:"many",
+   vocab:"교과서 수준의 쉬운 낱말을 쓰고, 어려운 말은 그림이나 예시로 풀어 준다",images:"글보다 그림이 먼저 보이게, 한 장에 큰 그림 하나",interact:"8~10분마다 손 들기, 따라 말하기, 짝 활동을 넣는다",flow:"도입 15% · 활동 중심 전개 65% · 정리 20%",a11y:"배경과 글자 대비를 4.5:1 이상으로 하고, 색만으로 정답을 구분하지 않는다"}},
+ {k:"mid",n:"중등",d:"또렷하고 감각적으로",subs:[{k:"m1",n:"중1 자유학기·탐색"},{k:"m23",n:"중2~3 교과 수업"},{k:"mclub",n:"동아리·창체"}],
+  topic:"인공지능은 어떻게 배울까?",subject:"정보 · 인공지능 기초",
+  spec:{titlePt:40,bodyPt:24,minPt:20,maxLines:4,maxChars:20,tone:"haeyo",icons:"some",
+   vocab:"교과 용어는 처음 나올 때 굵게 쓰고 뜻을 함께 적는다",images:"개념마다 예시 이미지나 도식 하나",interact:"10~15분마다 질문, 퀴즈, 모둠 활동을 넣는다",flow:"도입 15% · 전개 65% · 정리 20%",a11y:"배경과 글자 대비를 4.5:1 이상으로 하고, 색만으로 정답을 구분하지 않는다"}},
+ {k:"high",n:"고등",d:"정확하고 깊이 있게",subs:[{k:"hgen",n:"일반 교과"},{k:"hexam",n:"수능·내신 대비"},{k:"hlab",n:"탐구·세미나"},{k:"hvoc",n:"특성화·직업"}],
+  topic:"함수의 극한, 그림으로 이해하기",subject:"수학 · 미적분",
+  spec:{titlePt:36,bodyPt:22,minPt:18,maxLines:5,maxChars:25,tone:"gaejo",icons:"few",
+   vocab:"교과·시험 용어를 정확히 쓰고 정의는 박스로 구분한다",images:"도식과 그래프 위주, 장식용 이미지는 쓰지 않는다",interact:"15~20분마다 확인 문제나 발문을 넣는다",flow:"도입 10% · 전개 70% · 정리 20%",a11y:"배경과 글자 대비를 4.5:1 이상으로 하고, 수식은 크게 따로 보여 준다"}},
+ {k:"adult",n:"성인",d:"실무에 바로 쓰이게",subs:[{k:"alife",n:"교양·평생교육"},{k:"awork",n:"직무·기업교육"},{k:"asenior",n:"시니어 디지털교육"},{k:"auni",n:"대학 강의"}],
+  topic:"보고서 한 장으로 끝내기",subject:"직무 · 문서 작성",
+  spec:{titlePt:36,bodyPt:22,minPt:18,maxLines:5,maxChars:25,tone:"hapsyo",icons:"few",
+   vocab:"실무 용어를 쓰되 약어는 처음에 풀어 쓴다",images:"실제 업무 화면, 사례 사진, 데이터 차트",interact:"15~20분마다 사례 토론이나 실습을 넣는다",flow:"도입 10% · 전개 60% · 실습 20% · 정리 10%",a11y:"배경과 글자 대비를 4.5:1 이상으로 하고, 표는 5행 안팎으로 줄인다"}},
+ {k:"pro",n:"전문강사",d:"한 장에 한 메시지",subs:[{k:"phrd",n:"기업 HRD 강의"},{k:"pconf",n:"컨퍼런스·세미나 발표"},{k:"pacad",n:"자격증·학원 강의"},{k:"pbrand",n:"강사 브랜딩 콘텐츠"}],
+  topic:"변화를 이끄는 리더의 질문",subject:"리더십 · 코칭",
+  spec:{titlePt:40,bodyPt:24,minPt:20,maxLines:3,maxChars:20,tone:"gaejo",icons:"few",
+   vocab:"한 장에 한 메시지, 핵심 문장은 20자 안팎으로 짧게 쓴다",images:"화면을 가득 채우는 이미지나 큰 숫자 하나",interact:"15분마다 청중 질문, 투표, 짧은 실습을 넣는다",flow:"오프닝 10% · 본론 70% · 클로징 20%",a11y:"뒷자리에서도 읽히게 대비를 7:1 가까이 높이고, 한 장의 요소는 5개 이하로 둔다"}}];
+/* 세부 대상별 보정 */
+const SUBADJ={e12:{size:4,lines:-1,chars:-3,note:"한글 읽기가 서툰 학생을 생각해 글은 짧게, 그림과 소리 안내를 함께 쓴다"},e56:{size:-2,note:"스스로 읽고 정리하는 활동을 늘린다"},
+ hexam:{lines:1,chars:5,note:"기출 형식과 핵심 개념 요약 박스를 반복해서 쓴다"},hlab:{note:"질문-가설-근거 구조로 장을 나눈다"},
+ asenior:{size:6,lines:-2,chars:-5,note:"버튼과 화면 캡처를 크게 보여 주고, 한 장에 한 동작만 안내한다"},auni:{lines:1,chars:5,note:"출처와 참고문헌을 장 하단에 작게 적는다"},
+ pconf:{lines:-1,note:"청중이 사진을 찍고 싶은 핵심 장을 따로 만든다"},pacad:{lines:1,note:"시험 포인트를 별표나 강조 박스로 표시한다"},pbrand:{note:"강사 로고와 시그니처 색을 모든 장에 일정하게 넣는다"}};
+const LV=k=>LEVELS.find(l=>l.k===k)||null;
+const SUBN=(l,s)=>{const L=LV(l);const x=L&&L.subs.find(z=>z.k===s);return x?x.n:"";};
+function specFor(l,s){const L=LV(l);if(!L)return null;const b=Object.assign({},L.spec),a=SUBADJ[s]||{};
+ if(a.size){b.titlePt+=a.size;b.bodyPt+=a.size;b.minPt+=a.size;}
+ if(a.lines)b.maxLines=Math.max(2,b.maxLines+a.lines);if(a.chars)b.maxChars=Math.max(10,b.maxChars+a.chars);
+ b.subNote=a.note||"";return b;}
+const FORMATS=["강의형","활동·실습형","토론·워크숍형","온라인·실시간","녹화 강의"];
+
+/* ───── 글꼴 ───── */
+const FONTS=[
+ {n:"Jua",d:"둥근 손맛, 어린이",w:400},{n:"Do Hyeon",d:"굵고 귀여운 제목",w:400},{n:"Black Han Sans",d:"아주 굵은 제목",w:400},
+ {n:"Gaegu",d:"손글씨",w:700},{n:"Nanum Pen Script",d:"펜 손글씨",w:400},{n:"Gowun Dodum",d:"부드러운 본문",w:400},
+ {n:"Gowun Batang",d:"부드러운 바탕체",w:700},{n:"Noto Sans KR",d:"표준 고딕",w:700},{n:"Nanum Gothic",d:"익숙한 고딕",w:800},
+ {n:"Gothic A1",d:"단정한 고딕",w:800},{n:"IBM Plex Sans KR",d:"또렷한 업무용 고딕",w:700},{n:"Nanum Myeongjo",d:"명조",w:800},{n:"Hahmlet",d:"현대적 명조",w:700}];
+const FW=n=>{const f=FONTS.find(x=>x.n===n);return f?f.w:700;};
+const fstack=(custom,n)=>`${tr(custom)?`"${tr(custom).replace(/"/g,"")}",`:""}"${n}","Malgun Gothic","Apple SD Gothic Neo",sans-serif`;
+
+/* ───── 스타일 프리셋 (대상별 3개씩) ───── */
+const RAD={square:{n:"각지게",px:"0.3cqw",c:"0.4cqw",md:"모서리 각지게 (반경 0~2pt)"},soft:{n:"살짝 둥글게",px:"1cqw",c:"1cqw",md:"모서리 살짝 둥글게 (반경 6~8pt)"},round:{n:"둥글게",px:"2.4cqw",c:"50%",md:"모서리 크게 둥글게 (반경 16pt 이상)"}};
+const DECOS=[{v:"none",n:"장식 없음"},{v:"dots",n:"물방울 점"},{v:"stars",n:"별"},{v:"leaves",n:"둥근 잎"},{v:"lined",n:"줄노트"},{v:"sticker",n:"스티커"},{v:"rule",n:"가는 금색 선"},{v:"underline",n:"형광펜 밑줄"},{v:"grid",n:"모눈"},{v:"blob",n:"둥근 얼룩"},{v:"band",n:"굵은 띠"}];
+const PRESETS=[
+ {k:"crayon",lv:"elem",n:"크레용 놀이터",mood:"밝고 활기찬, 놀이하는 느낌",c:{bg:"#FFF6E2",sf:"#FFFFFF",pr:"#F26B3A",acc:"#2FA9DE",tx:"#3A2E2A",mu:"#8A776B"},ft:"Jua",fb:"Gowun Dodum",rad:"round",deco:"dots",border:true},
+ {k:"forest",lv:"elem",n:"그림책 숲",mood:"포근하고 차분한 이야기책",c:{bg:"#EDF5E6",sf:"#FFFDF5",pr:"#3F8A4F",acc:"#EDA628",tx:"#2C3828",mu:"#6E7D66"},ft:"Do Hyeon",fb:"Gowun Dodum",rad:"round",deco:"leaves",border:false},
+ {k:"space",lv:"elem",n:"우주 탐험대",mood:"신기하고 모험하는 느낌",c:{bg:"#1D2252",sf:"#2B3175",pr:"#FFD24A",acc:"#6EE0F5",tx:"#FFFFFF",mu:"#B9BFEA"},ft:"Black Han Sans",fb:"Gowun Dodum",rad:"round",deco:"stars",border:false},
+ {k:"mint",lv:"mid",n:"프레시 민트",mood:"상쾌하고 세련된",c:{bg:"#E7F6F1",sf:"#FFFFFF",pr:"#0F7F72",acc:"#FF6F5E",tx:"#1C3834",mu:"#5E7A75"},ft:"Black Han Sans",fb:"Noto Sans KR",rad:"soft",deco:"blob",border:false},
+ {k:"pop",lv:"mid",n:"팝 스티커",mood:"톡톡 튀는 SNS 감성",c:{bg:"#FFFFFF",sf:"#F2EEFF",pr:"#5B3FE0",acc:"#FFC72C",tx:"#1E1A33",mu:"#6B6585"},ft:"Do Hyeon",fb:"Noto Sans KR",rad:"soft",deco:"sticker",border:true},
+ {k:"note",lv:"mid",n:"노트 필기",mood:"공책에 정리한 듯 친근한",c:{bg:"#FBFAF4",sf:"#FFFFFF",pr:"#2D58A6",acc:"#E5533F",tx:"#22252B",mu:"#6A6E78"},ft:"Gaegu",fb:"Gowun Dodum",rad:"square",deco:"lined",border:true},
+ {k:"navygold",lv:"high",n:"네이비 골드",mood:"지적이고 단정한 아카데믹",c:{bg:"#F6F3EA",sf:"#FFFFFF",pr:"#1B2A4A",acc:"#B8913A",tx:"#1B2A4A",mu:"#5F6A80"},ft:"Nanum Myeongjo",fb:"Noto Sans KR",rad:"square",deco:"rule",border:true},
+ {k:"mono",lv:"high",n:"미니멀 모노",mood:"군더더기 없이 집중되는",c:{bg:"#FFFFFF",sf:"#F2F3F5",pr:"#111827",acc:"#2563EB",tx:"#111827",mu:"#5B6170"},ft:"Gothic A1",fb:"Gothic A1",rad:"square",deco:"none",border:false},
+ {k:"exam",lv:"high",n:"수능 집중",mood:"핵심만 또렷하게, 시험 대비",c:{bg:"#FFFFFF",sf:"#FFF3EA",pr:"#C9420C",acc:"#1C6FC9",tx:"#212529",mu:"#62676D"},ft:"Black Han Sans",fb:"Nanum Gothic",rad:"soft",deco:"underline",border:true},
+ {k:"biz",lv:"adult",n:"비즈니스 클린",mood:"깔끔하고 믿음직한 업무용",c:{bg:"#FFFFFF",sf:"#F0F4F8",pr:"#0B4F8C",acc:"#00A19A",tx:"#1D2530",mu:"#5B6675"},ft:"IBM Plex Sans KR",fb:"IBM Plex Sans KR",rad:"soft",deco:"band",border:false},
+ {k:"lounge",lv:"adult",n:"따뜻한 라운지",mood:"편안하게 이야기 나누는",c:{bg:"#F5EFE8",sf:"#FFFFFF",pr:"#7A4B37",acc:"#C9820A",tx:"#3B2F2A",mu:"#7E6E64"},ft:"Gowun Batang",fb:"Gowun Dodum",rad:"soft",deco:"blob",border:false},
+ {k:"senior",lv:"adult",n:"시니어 큰글씨",mood:"크고 또렷하게, 한눈에",c:{bg:"#FFFFFF",sf:"#FFF7DC",pr:"#00563F",acc:"#D9480F",tx:"#000000",mu:"#3F3F3F"},ft:"Noto Sans KR",fb:"Noto Sans KR",rad:"soft",deco:"none",border:true},
+ {k:"keynote",lv:"pro",n:"키노트 다크",mood:"무대 조명 아래 강렬한",c:{bg:"#0F1115",sf:"#1B1F27",pr:"#FFFFFF",acc:"#FF4D5A",tx:"#F2F3F5",mu:"#9CA3AF"},ft:"Gothic A1",fb:"Gothic A1",rad:"soft",deco:"none",border:false},
+ {k:"editorial",lv:"pro",n:"에디토리얼 매거진",mood:"잡지처럼 여유 있고 고급스러운",c:{bg:"#FAFAF7",sf:"#EFEDE6",pr:"#141414",acc:"#D63A30",tx:"#141414",mu:"#6B6B66"},ft:"Hahmlet",fb:"Noto Sans KR",rad:"square",deco:"rule",border:false},
+ {k:"insight",lv:"pro",n:"데이터 인사이트",mood:"숫자로 설득하는 분석형",c:{bg:"#FFFFFF",sf:"#EEF3FF",pr:"#1E3A8A",acc:"#0EA371",tx:"#0F172A",mu:"#55607A"},ft:"IBM Plex Sans KR",fb:"IBM Plex Sans KR",rad:"soft",deco:"grid",border:false}];
+const CROLE=[{k:"bg",n:"배경",use:"슬라이드 바탕"},{k:"sf",n:"카드·박스",use:"내용 상자, 표 머리"},{k:"pr",n:"주 색",use:"제목, 번호, 섹션 배경"},{k:"acc",n:"강조 색",use:"핵심 단어, 정답, 포인트"},{k:"tx",n:"본문 글자",use:"본문, 목록"},{k:"mu",n:"보조 글자",use:"설명, 출처, 페이지 번호"}];
+
+/* ───── 레이아웃 ───── */
+const LAYS=[
+ {k:"cover",n:"표지",d:"과목·대상 라벨, 큰 제목, 부제, 강사명",md:"과목·대상 라벨을 위에 작게, 수업 제목을 화면 너비의 70% 안에서 가장 크게, 부제와 강사명·날짜는 아래쪽에 둔다."},
+ {k:"agenda",n:"목차",d:"오늘 배울 내용 3~5개",md:"제목 아래 번호 원과 함께 3~5개 항목을 세로로 놓는다. 항목은 한 줄, 같은 간격."},
+ {k:"goal",n:"학습 목표",d:"목표 2~3개를 체크 카드로",md:"'~할 수 있다' 형태의 목표 2~3개를 카드로 나란히 놓고 앞에 체크 표시를 붙인다."},
+ {k:"section",n:"섹션 구분",d:"주 색 배경 + 큰 번호",md:"주 색으로 화면을 채우고 큰 섹션 번호와 섹션 제목만 둔다. 다른 요소는 넣지 않는다."},
+ {k:"concept",n:"개념 설명",d:"설명 목록 + 핵심 박스",md:"왼쪽 60%에 설명 목록, 오른쪽 40%에 '핵심' 박스(카드 색 배경, 강조 색 라벨)를 둔다."},
+ {k:"two",n:"2단 비교",d:"A와 B를 나란히",md:"같은 크기 카드 두 개를 나란히 두고, 카드마다 소제목과 항목 3개 이하를 같은 높이에 맞춘다."},
+ {k:"image",n:"이미지 + 설명",d:"큰 그림과 짧은 설명",md:"왼쪽 55%에 이미지(또는 이미지 자리), 오른쪽에 짧은 설명 2~3줄과 출처를 둔다."},
+ {k:"activity",n:"활동·실습",d:"단계 1-2-3 + 시간",md:"제목 옆에 활동 시간 배지를 두고, 활동 단계를 번호 카드 3개로 가로 배치한다."},
+ {k:"quiz",n:"퀴즈·확인",d:"문제 + 보기 4개",md:"문제를 카드 안에 크게 쓰고, 보기 4개를 2×2로 놓는다. 정답 공개 장에서만 정답 보기에 강조 색을 쓴다."},
+ {k:"summary",n:"정리·요약",d:"핵심 3가지",md:"오늘의 핵심 3가지를 강조 색 번호와 함께 세로로 놓는다. 각 항목은 한 문장."},
+ {k:"qa",n:"질문·토론",d:"큰 물음표 + 발문",md:"강조 색 원 안에 큰 물음표를 두고, 옆에 토론 질문 한 문장을 크게 쓴다."},
+ {k:"close",n:"마무리·과제",d:"과제 상자 + 인사",md:"과제나 다음 시간 안내를 카드에 넣고, 아래에 감사 인사와 연락처를 둔다."}];
+const LDEF={elem:["cover","goal","concept","image","activity","quiz","summary","close"],mid:["cover","agenda","goal","section","concept","image","activity","quiz","summary","close"],
+ high:["cover","agenda","goal","section","concept","two","quiz","summary","close"],adult:["cover","agenda","goal","section","concept","two","image","activity","summary","qa","close"],
+ pro:["cover","agenda","section","concept","two","image","activity","qa","summary","close"]};
+
+/* ───── 상태 ───── */
+const KEY="deck-style-line:v1";
+const blank=()=>({who:"",hero:"",started:false,toured:false,cur:0,
+ aud:{level:"",sub:"",subject:"",topic:"",format:"",minutes:"",size:"",traits:""},
+ style:{preset:"",name:"",mood:"",bg:"",sf:"",pr:"",acc:"",tx:"",mu:"",ft:"",fb:"",ftCustom:"",fbCustom:"",rad:"soft",deco:"none",border:false,decoNote:""},
+ pv:"cover",lays:[],lnotes:{},
+ text:{titlePt:"",bodyPt:"",minPt:"",maxLines:"",maxChars:"",tone:"",icons:"",vocab:"",images:"",notes:"",interact:"",flow:"",a11y:""},
+ out:"pptx",triggers:"",rules:{must:"",never:""},dod:"",slug:"",tests:""});
+let D=blank();
+try{const r=JSON.parse(localStorage.getItem(KEY)||"null");if(r){const b=blank();D=Object.assign(b,r);["aud","style","text","rules"].forEach(k=>{D[k]=Object.assign(blank()[k],r[k]||{});});if(!D.lnotes||typeof D.lnotes!=="object")D.lnotes={};if(!Array.isArray(D.lays))D.lays=[];}}catch(e){}
+let svT=null;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(D));}catch(e){}
+ const s=$("#saved");if(s){s.classList.add("on");clearTimeout(svT);svT=setTimeout(()=>s.classList.remove("on"),1200);}}
+const getP=p=>p.split(".").reduce((o,k)=>o==null?o:o[k],D);
+const setP=(p,v)=>{const k=p.split(".");let o=D;for(let i=0;i<k.length-1;i++)o=o[k[i]];o[k[k.length-1]]=v;};
+const styleSet=()=>HEX(D.style.bg)&&HEX(D.style.pr)&&HEX(D.style.tx);
+const levelName=()=>{const L=LV(D.aud.level);return L?L.n+(D.aud.sub?" "+SUBN(D.aud.level,D.aud.sub):""):"";};
+
+/* ───── 색 계산 ───── */
+function lum(h){if(!HEX(h))return 1;const c=[1,3,5].map(i=>{const v=parseInt(h.substr(i,2),16)/255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4);});return .2126*c[0]+.7152*c[1]+.0722*c[2];}
+const contrast=(a,b)=>{const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);};
+const onColor=h=>contrast(h,"#FFFFFF")>=contrast(h,"#141414")?"#FFFFFF":"#141414";
+
+/* ───── 슬라이드 미리보기 ───── */
+function sampleStyle(st){return st&&HEX(st.bg)?st:PRESETS[0].c&&{bg:PRESETS[0].c.bg,sf:PRESETS[0].c.sf,pr:PRESETS[0].c.pr,acc:PRESETS[0].c.acc,tx:PRESETS[0].c.tx,mu:PRESETS[0].c.mu,ft:PRESETS[0].ft,fb:PRESETS[0].fb,rad:"round",deco:"dots",border:true};}
+function vars(st){const r=RAD[st.rad]||RAD.soft;
+ return `--s-bg:${st.bg};--s-sf:${st.sf||st.bg};--s-pr:${st.pr};--s-acc:${st.acc||st.pr};--s-tx:${st.tx};--s-mu:${st.mu||st.tx};--s-on:${onColor(st.pr)};--s-ona:${onColor(st.acc||st.pr)};--s-ft:${fstack(st.ftCustom,st.ft||"Noto Sans KR")};--s-fb:${fstack(st.fbCustom,st.fb||"Noto Sans KR")};--s-fw:${FW(st.ft)};--s-rd:${r.px};--s-rdc:${r.c};--s-bd:${st.border?"0.25cqw solid color-mix(in srgb,"+st.pr+" 22%,transparent)":"0"}`;}
+function deco(kind,st,fill){const a=st.acc||st.pr,p=st.pr;
+ const S=c=>`<svg class="deco" viewBox="0 0 160 90" preserveAspectRatio="none" aria-hidden="true">${c}</svg>`;
+ switch(kind){
+  case "dots":return S(`<circle cx="150" cy="8" r="9" fill="${a}" opacity=".35"/><circle cx="138" cy="20" r="4" fill="${p}" opacity=".4"/><circle cx="8" cy="84" r="7" fill="${p}" opacity=".25"/><circle cx="20" cy="88" r="3" fill="${a}" opacity=".5"/>`);
+  case "stars":return S([[140,10],[150,26],[126,18],[12,78],[24,86],[150,80]].map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${i%2?0.8:1.4}" fill="${a}" opacity=".9"/>`).join("")+`<circle cx="148" cy="70" r="8" fill="${p}" opacity=".25"/>`);
+  case "leaves":return S(`<ellipse cx="152" cy="10" rx="12" ry="5" transform="rotate(-30 152 10)" fill="${p}" opacity=".25"/><ellipse cx="140" cy="4" rx="8" ry="3.5" transform="rotate(20 140 4)" fill="${a}" opacity=".35"/><ellipse cx="8" cy="86" rx="12" ry="5" transform="rotate(-20 8 86)" fill="${p}" opacity=".2"/>`);
+  case "lined":return S(Array.from({length:9},(_,i)=>`<line x1="0" x2="160" y1="${10+i*9}" y2="${10+i*9}" stroke="${p}" stroke-width=".15" opacity=".35"/>`).join("")+`<line x1="10" x2="10" y1="0" y2="90" stroke="${a}" stroke-width=".3" opacity=".6"/>`);
+  case "sticker":return S(`<rect x="132" y="6" width="22" height="10" rx="2" transform="rotate(8 143 11)" fill="${a}"/><circle cx="12" cy="80" r="6" fill="${p}" opacity=".18"/>`);
+  case "rule":return S(`<line x1="9" x2="151" y1="6" y2="6" stroke="${a}" stroke-width=".35"/><line x1="9" x2="151" y1="84" y2="84" stroke="${a}" stroke-width=".35"/>`);
+  case "underline":return S(`<rect x="0" y="86" width="160" height="4" fill="${a}" opacity=".25"/>`);
+  case "grid":return S(Array.from({length:17},(_,i)=>`<line x1="${i*10}" x2="${i*10}" y1="0" y2="90" stroke="${p}" stroke-width=".1" opacity=".18"/>`).join("")+Array.from({length:10},(_,i)=>`<line x1="0" x2="160" y1="${i*10}" y2="${i*10}" stroke="${p}" stroke-width=".1" opacity=".18"/>`).join(""));
+  case "blob":return S(`<path d="M128 0c10 8 34 4 32 22 0 0 0-22 0-22z" fill="${a}" opacity=".3"/><circle cx="2" cy="90" r="18" fill="${p}" opacity=".12"/>`);
+  case "band":return fill?"":S(`<rect x="0" y="0" width="3" height="90" fill="${p}"/><rect x="0" y="86" width="160" height="4" fill="${p}" opacity=".12"/>`);
+  default:return "";}}
+function slide(k,st,o){o=o||{};st=sampleStyle(st);const topic=esc(o.topic||"수업 제목을 적어 주세요"),lab=esc(o.label||"과목 · 대상");
+ const pts=["개념을 한 문장으로 말해요","예시로 직접 확인해요","내 말로 다시 정리해요"];
+ const list=a=>`<div style="display:flex;flex-direction:column;gap:1.4cqw">${a.map((t,i)=>`<div class="li"><span class="n">${i+1}</span>${t}</div>`).join("")}</div>`;
+ let fill=false,inner="";
+ switch(k){
+  case "cover":inner=`<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:2cqw"><span class="lbl">${lab}</span><h3 class="h hx">${topic}</h3><span class="bar"></span><p class="p mu">오늘 함께 알아볼 이야기</p></div><p class="p mu" style="font-size:1.9cqw">${esc(o.who||"강사 이름")} · 2026.10.27</p>`;break;
+  case "agenda":inner=`<h3 class="h">오늘 배울 내용</h3>${list(["왜 배울까요?","핵심 개념 알아보기","직접 해 보기","정리하고 확인하기"])}`;break;
+  case "goal":inner=`<h3 class="h">학습 목표</h3><div class="row">${["핵심 개념을 설명할 수 있다","예시에 적용할 수 있다","배운 내용을 정리할 수 있다"].map(t=>`<div class="box" style="display:flex;flex-direction:column;gap:1.2cqw"><span class="n na">✓</span><p class="p">${t}</p></div>`).join("")}</div>`;break;
+  case "section":fill=true;inner=`<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:1.2cqw"><span style="font-family:var(--s-ft);font-size:12cqw;line-height:1;opacity:.35">02</span><h3 class="h hx">핵심 개념 알아보기</h3></div>`;break;
+  case "concept":inner=`<h3 class="h">${topic}</h3><div class="row"><div style="flex:1.5"><ul>${pts.map(p=>`<li>${p}</li>`).join("")}</ul></div><div class="box"><span class="lbl">핵심</span><p class="p" style="margin-top:1cqw;font-weight:700">한 줄로 말하면 이것이에요</p></div></div>`;break;
+  case "two":inner=`<h3 class="h">무엇이 다를까요?</h3><div class="row">${["A 방법","B 방법"].map((t,i)=>`<div class="box"><p class="p" style="font-family:var(--s-ft);color:${i?"var(--s-acc)":"var(--s-pr)"};font-size:3cqw">${t}</p><ul style="margin-top:1cqw"><li>특징 하나</li><li>특징 둘</li></ul></div>`).join("")}</div>`;break;
+  case "image":inner=`<h3 class="h">눈으로 확인해요</h3><div class="row"><div class="ph" style="flex:1.3">이미지 자리</div><div style="display:flex;flex-direction:column;gap:1.2cqw;justify-content:center"><p class="p">그림에서 무엇이 보이나요?</p><p class="p mu" style="font-size:1.8cqw">출처: 자료 이름</p></div></div>`;break;
+  case "activity":inner=`<div style="display:flex;align-items:center;gap:2cqw"><h3 class="h">함께 해 봐요</h3><span class="n na" style="width:auto;padding:0 1.6cqw;border-radius:99px;font-size:2cqw">10분</span></div><div class="row">${["모둠 만들기","자료 살펴보기","결과 발표하기"].map((t,i)=>`<div class="box" style="display:flex;flex-direction:column;gap:1.2cqw"><span class="n">${i+1}</span><p class="p">${t}</p></div>`).join("")}</div>`;break;
+  case "quiz":inner=`<h3 class="h">확인 문제</h3><div class="box"><p class="p" style="font-weight:700">다음 중 알맞은 것은 무엇일까요?</p></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw">${["① 보기 하나","② 보기 둘","③ 보기 셋","④ 보기 넷"].map((t,i)=>`<div class="box" style="padding:1.4cqw 2cqw;${i===1?"background:var(--s-acc);color:var(--s-ona)":""}"><p class="p">${t}</p></div>`).join("")}</div>`;break;
+  case "summary":inner=`<h3 class="h">오늘의 정리</h3><div style="display:flex;flex-direction:column;gap:1.6cqw">${pts.map((t,i)=>`<div class="li"><span class="n na">${i+1}</span>${t}</div>`).join("")}</div>`;break;
+  case "qa":inner=`<div style="flex:1;display:flex;align-items:center;gap:4cqw"><span class="n na" style="width:16cqw;height:16cqw;font-size:10cqw;border-radius:50%">?</span><div style="display:flex;flex-direction:column;gap:1.4cqw"><h3 class="h">함께 생각해 봐요</h3><p class="p">우리 생활에서는 어디에 쓰일까요?</p></div></div>`;break;
+  case "close":inner=`<h3 class="h">마무리</h3><div class="box"><span class="lbl">다음 시간까지</span><p class="p" style="margin-top:1cqw">오늘 배운 내용을 한 문장으로 적어 오기</p></div><p class="p mu" style="margin-top:auto">수고했어요. 고맙습니다!</p>`;break;}
+ return `<div class="sl${fill?" fill":""}${o.thumb?" thumb":""}" style="${vars(st)}">${fill?"":deco(st.deco,st,fill)}<div class="sli">${inner}</div></div>`;}
+const curStyle=()=>styleSet()?D.style:null;
+const pvOpts=()=>({topic:tr(D.aud.topic)||(LV(D.aud.level)||{}).topic,label:[tr(D.aud.subject),levelName()].filter(Boolean).join(" · ")||"과목 · 대상",who:tr(D.who)});
+
+/* ───── 5개 역 ───── */
+const ST=[
+{id:"aud",g:"나래",who:"역장 나래",role:"대상역",col:"--c1",time:10,out:"대상·수업 정보",
+ title:"누구를 가르치나요?",sub:"대상을 세분화하면 글자 크기와 분위기가 저절로 정해져요",
+ say:n=>`어서 오세요${n?`, <b>${esc(n)}</b>님`:""}. 첫 번째 역의 나래예요.<br><br>같은 내용도 <b>초등 1학년</b>과 <b>기업 임원</b>에게는 전혀 다른 슬라이드가 필요해요. 그래서 먼저 <b>누구에게, 어떤 수업을</b> 하는지 정해요.<br><br>큰 대상과 세부 대상을 고르면 권장 글자 크기와 분량이 바로 계산돼요.`,
+ tips:["가장 자주 가르치는 대상을 기준으로 골라 주세요. 다른 대상용은 따로 하나 더 만들면 돼요.","미리보기용 수업 주제는 실제로 곧 할 수업이면 좋아요.","학습자 특징에는 '집중이 짧다', '스마트폰으로 본다' 같은 현실을 적어 주세요."],
+ todo:[{t:"큰 대상 고르기",req:1,f:"aud.level",ok:()=>!!D.aud.level},
+  {t:"세부 대상 고르기",req:1,f:"aud.sub",ok:()=>!!D.aud.sub},
+  {t:"과목·분야 적기",req:1,f:"aud.subject",ok:()=>!!tr(D.aud.subject)},
+  {t:"수업 형태와 시간",f:"aud.format",ok:()=>!!D.aud.format&&!!tr(D.aud.minutes)},
+  {t:"학습자 특징 적기",f:"aud.traits",ok:()=>!!tr(D.aud.traits)}]},
+{id:"mood",g:"도담",who:"역장 도담",role:"무드역",col:"--c2",time:15,out:"색·글꼴·모양",
+ title:"스타일 고르고 다듬기",sub:"대상별 추천 스타일에서 시작해 색과 글꼴을 내 것으로 바꿔요",
+ say:()=>`반가워요, 도담이에요. 여기서는 교안의 <b>얼굴</b>을 정해요.<br><br>대상에 맞는 추천 스타일 세 가지가 먼저 보여요. 마음에 드는 걸 고른 다음, <b>학교나 회사 색</b>으로 바꾸거나 글꼴을 바꿔 보세요.<br><br>오른쪽 미리보기가 바로바로 바뀌니까 눈으로 보면서 고르면 돼요.`,
+ tips:["색은 많을수록 산만해요. 주 색 하나, 강조 색 하나면 충분해요.","글자와 배경 대비 점수가 4.5 아래면 뒷자리에서 잘 안 보여요.","PPT에서 쓸 글꼴이 따로 있으면(예: Pretendard, Paperlogy) '직접 입력'에 적어 주세요."],
+ todo:[{t:"스타일 하나 고르기",req:1,f:"style.preset",ok:()=>!!D.style.preset},
+  {t:"내 스타일 이름 짓기",req:1,f:"style.name",ok:()=>!!tr(D.style.name)},
+  {t:"글자 대비 4.5 이상",req:1,f:"style.colors",ok:()=>styleSet()&&contrast(D.style.tx,D.style.bg)>=4.5},
+  {t:"분위기 한 줄 적기",f:"style.mood",ok:()=>!!tr(D.style.mood)},
+  {t:"장식 규칙 메모",f:"style.decoNote",ok:()=>!!tr(D.style.decoNote)}]},
+{id:"lay",g:"해솔",who:"역장 해솔",role:"레이아웃역",col:"--c3",time:15,out:"레이아웃 세트",
+ title:"쓸 레이아웃 고르기",sub:"수업에 필요한 슬라이드 모양을 골라 세트로 묶어요",
+ say:()=>`안녕하세요, 해솔이에요. 교안은 몇 가지 <b>정해진 모양</b>을 반복할 때 가장 보기 좋아요.<br><br>대상에 맞게 미리 골라 둔 세트에서 <b>빼거나 더해</b> 주세요. 활동이 많은 수업이면 활동·퀴즈를, 발표형이면 섹션·질문을 챙기면 좋아요.<br><br>레이아웃마다 꼭 넣을 것을 한 줄씩 적어 두면 AI가 더 정확해져요.`,
+ tips:["표지, 섹션, 정리는 거의 모든 교안에 필요해요.","레이아웃이 10개를 넘으면 AI가 헷갈려요. 6~10개가 알맞아요.","메모 예: 활동 장에는 항상 시간과 준비물을 적는다."],
+ todo:[{t:"레이아웃 5개 이상",req:1,f:"lays",ok:()=>D.lays.length>=5},
+  {t:"표지 포함하기",req:1,f:"lays",ok:()=>D.lays.includes("cover")},
+  {t:"정리·요약 포함하기",f:"lays",ok:()=>D.lays.includes("summary")},
+  {t:"레이아웃 메모 2개 이상",f:"lnotes",ok:()=>D.lays.filter(k=>tr(D.lnotes[k])).length>=2}]},
+{id:"txt",g:"로운",who:"역장 로운",role:"글쓰기역",col:"--c4",time:10,out:"글자·말투 규칙",
+ title:"글자와 말투 정하기",sub:"한 장에 얼마나, 어떤 말투로 쓸지 숫자로 정해요",
+ say:()=>`로운이에요. 디자인이 예뻐도 <b>글이 빽빽하면</b> 학습자는 읽지 않아요.<br><br>대상에 맞는 <b>추천값</b>을 이미 채워 두었어요. 숫자를 보고 우리 교실에 맞게 고쳐 주세요.<br><br>'글이 넘치면 글자를 줄이지 말고 장을 나눈다'처럼, 여기서 정한 숫자가 AI의 기준선이 돼요.`,
+ tips:["교실 뒤에서 읽힐 크기인지 떠올려 보세요. 큰 교실일수록 숫자를 키워요.","줄 수 제한이 가장 효과가 커요. 숫자 하나만 지킨다면 이것부터.","상호작용 주기를 적어 두면 AI가 퀴즈·활동 장을 알맞게 끼워 넣어요."],
+ todo:[{t:"제목·본문 글자 크기",req:1,f:"text.titlePt",ok:()=>+D.text.titlePt>0&&+D.text.bodyPt>0},
+  {t:"한 장 최대 줄 수",req:1,f:"text.maxLines",ok:()=>+D.text.maxLines>0},
+  {t:"말투 고르기",req:1,f:"text.tone",ok:()=>!!D.text.tone},
+  {t:"어휘 수준 적기",f:"text.vocab",ok:()=>!!tr(D.text.vocab)},
+  {t:"상호작용 주기 적기",f:"text.interact",ok:()=>!!tr(D.text.interact)},
+  {t:"접근성 기준 적기",f:"text.a11y",ok:()=>!!tr(D.text.a11y)}]},
+{id:"done",g:"다온",who:"역장 다온",role:"완성역",col:"--c5",time:10,out:"SKILL.md",
+ title:"규칙 정하고 스킬 완성하기",sub:"부르는 말과 지킬 것을 정하면 SKILL.md가 나와요",
+ say:()=>`종착역이에요. 다온이에요.<br><br>이제 <b>어떻게 부탁하면</b> 이 스타일을 꺼내 쓸지, <b>꼭 지킬 것과 하지 말 것</b>, 그리고 <b>완료 기준</b>만 정하면 돼요.<br><br>아래에서 슬라이드 미리보기와 SKILL.md가 함께 완성돼요.`,
+ tips:["완료 기준은 '예/아니오'로 답할 수 있게 적어 주세요.","'하지 말 것'에는 지난번 AI 교안에서 거슬렸던 점을 적으면 딱이에요.","완성 후 테스트 문장으로 실제 교안을 한 번 만들어 보고, 어긋난 점을 규칙에 더해 주세요."],
+ todo:[{t:"호출 문장 2개 이상",req:1,f:"triggers",ok:()=>lines(D.triggers).length>=2},
+  {t:"꼭 지킬 것 2개 이상",req:1,f:"rules.must",ok:()=>lines(D.rules.must).length>=2},
+  {t:"하지 말 것 1개 이상",req:1,f:"rules.never",ok:()=>lines(D.rules.never).length>=1},
+  {t:"완료 기준 3개 이상",req:1,f:"dod",ok:()=>lines(D.dod).length>=3},
+  {t:"테스트 문장 2개",f:"tests",ok:()=>lines(D.tests).length>=2}]}];
+
+/* ───── 입력 도우미 ───── */
+function chips(p,arr,add){const cur=String(getP(p)||"");
+ return `<div class="ex"><span>예시</span>${arr.map(v=>{const f=v.split("\n");let l=f[0];if(l.length>30)l=l.slice(0,30)+"…";
+  return `<button class="chip${cur.includes(f[0])?" used":""}" data-p="${p}" data-v="${att(v)}"${add?' data-add="1"':""}>${esc(l)}${f.length>1?`<small>+${f.length-1}</small>`:""}</button>`;}).join("")}</div>`;}
+function F(p,lab,o){o=o||{};const v=getP(p);const val=v==null?"":v;const fid="f-"+p.replace(/\./g,"-");
+ const inp=o.input?`<input class="in" id="${fid}" data-p="${p}" value="${att(val)}" placeholder="${att(o.ph||"")}"${o.num?' type="number" min="1" max="200" inputmode="numeric"':""}>`
+  :`<textarea class="in" id="${fid}" data-p="${p}" rows="${o.rows||3}" placeholder="${att(o.ph||"")}">${esc(val)}</textarea>`;
+ return `<div class="fld" data-f="${p}"><label class="lab" for="${fid}">${lab}${o.req?'<i class="req">필수</i>':""}</label>${o.help?`<p class="help">${o.help}</p>`:""}${inp}${o.ex?chips(p,o.ex,o.add):""}</div>`;}
+function applySpec(force){const s=specFor(D.aud.level,D.aud.sub);if(!s)return false;
+ ["titlePt","bodyPt","minPt","maxLines","maxChars"].forEach(k=>{if(force||!tr(D.text[k]))D.text[k]=String(s[k]);});
+ ["tone","icons"].forEach(k=>{if(force||!D.text[k])D.text[k]=s[k];});
+ ["vocab","images","interact","flow","a11y"].forEach(k=>{if(force||!tr(D.text[k]))D.text[k]=k==="images"&&s.subNote?s[k]+"\n"+s.subNote:s[k];});
+ if(force||!D.text.notes)D.text.notes="yes";return true;}
+
+/* ───── 1역 ───── */
+function s1(){const L=LV(D.aud.level),sp=specFor(D.aud.level,D.aud.sub);
+ return `<div class="sec"><span class="tag">대상</span><b>큰 대상</b><span>가장 자주 가르치는 대상을 골라 주세요</span></div>
+ <div class="tiles" data-f="aud.level">${LEVELS.map(l=>`<button class="tile${D.aud.level===l.k?" on":""}" data-act="level" data-v="${l.k}"><b>${l.n}</b><small>${l.d}</small></button>`).join("")}</div>
+ ${L?`<div class="fld" data-f="aud.sub"><div class="lab">세부 대상<i class="req">필수</i></div><div class="subs">${L.subs.map(s=>`<button class="sub${D.aud.sub===s.k?" on":""}" data-act="sub" data-v="${s.k}">${s.n}</button>`).join("")}</div>${sp&&sp.subNote?`<p class="help">이 대상만의 규칙: ${esc(sp.subNote)}</p>`:""}</div>`:'<div class="al w">위에서 큰 대상을 먼저 골라 주세요. 세부 대상이 열려요.</div>'}
+ ${sp?`<div class="specs">${[["제목",sp.titlePt+"pt"],["본문",sp.bodyPt+"pt"],["한 장 최대",sp.maxLines+"줄"],["줄당 글자",sp.maxChars+"자 안팎"]].map(x=>`<div class="spec"><small>${x[0]} 권장</small><b>${x[1]}</b></div>`).join("")}</div>`:""}
+ <div class="sec"><span class="tag">수업</span><b>어떤 수업인가요?</b></div>
+ <div class="g2">${F("aud.subject","과목·분야",{req:1,input:1,ph:"예: 과학 · 물의 순환",ex:L?[L.subject,"국어 · 글쓰기","직무 · 엑셀 실무"]:["과학 · 물의 순환","정보 · 인공지능 기초","직무 · 문서 작성"]})}
+ ${F("aud.topic","미리보기에 쓸 수업 주제",{input:1,ph:"예: 물은 어디로 여행할까요?",help:"표지와 개념 장 미리보기에 들어가요.",ex:L?[L.topic]:[]})}</div>
+ <div class="fld" data-f="aud.format"><div class="lab">수업 형태</div><div class="seg">${FORMATS.map(f=>`<button class="${D.aud.format===f?"on":""}" data-act="format" data-v="${f}">${f}</button>`).join("")}</div></div>
+ <div class="g2">${F("aud.minutes","한 차시 시간",{input:1,ph:"예: 40분",ex:["40분","45분","50분","2시간","하루 8시간"]})}${F("aud.size","인원",{input:1,ph:"예: 25명",ex:["25명 내외","10명 이하 소그룹","100명 이상 강당"]})}</div>
+ ${F("aud.traits","학습자 특징",{rows:3,help:"집중 시간, 사전 지식, 보는 화면(빔프로젝터·태블릿) 등을 적어 주세요.",ex:["집중 시간이 10분 정도로 짧다","태블릿으로 자료를 함께 본다","사전 지식 차이가 크다","교실 뒤쪽까지 거리가 멀다"],add:1})}`;}
+
+/* ───── 2역 ───── */
+function s2(){const lv=D.aud.level,st=D.style;
+ const card=p=>`<button class="pre${st.preset===p.k?" on":""}" data-act="preset" data-v="${p.k}">${slide("cover",Object.assign({},p.c,{ft:p.ft,fb:p.fb,rad:p.rad,deco:p.deco,border:p.border}),{thumb:1,topic:p.n,label:LV(p.lv).n})}<b>${p.n}</b><small>${p.mood}</small></button>`;
+ const mine=PRESETS.filter(p=>p.lv===lv),others=PRESETS.filter(p=>p.lv!==lv);
+ const groups=lv?`<div class="pgroup"><small>${LV(lv).n} 추천</small><div class="presets">${mine.map(card).join("")}</div></div>
+  <details class="pgroup"><summary style="cursor:pointer;font-size:13px;font-weight:600;color:var(--mute)">다른 대상의 스타일도 보기 (${others.length}개)</summary><div class="presets" style="margin-top:10px">${others.map(card).join("")}</div></details>`
+  :`<div class="presets">${PRESETS.map(card).join("")}</div>`;
+ const cr=styleSet()?contrast(st.tx,st.bg):0;
+ const edit=styleSet()?`<div class="sec"><span class="tag">다듬기</span><b>내 스타일로 바꾸기</b><span>미리보기가 바로 바뀌어요</span></div>
+ <div class="stage" id="stage"><div class="seg">${LAYS.map(l=>`<button class="${D.pv===l.k?"on":""}" data-act="pv" data-v="${l.k}">${l.n}</button>`).join("")}</div><div id="pvBox">${slide(D.pv,st,pvOpts())}</div></div>
+ <div class="g2">${F("style.name","내 스타일 이름",{req:1,input:1,ph:"예: 4학년 2반 크레용 교안",ex:[st.preset?(PRESETS.find(p=>p.k===st.preset)||{}).n+" (내 버전)":"우리 반 교안"]})}${F("style.mood","분위기 한 줄",{input:1,ph:"예: 밝고 활기찬, 놀이하는 느낌"})}</div>
+ <div class="fld" data-f="style.colors"><div class="lab">색 6가지<i class="req">필수</i></div><p class="help">글자 대비: <b style="color:${cr>=4.5?"var(--ok)":"var(--warn)"}" id="crv">${cr.toFixed(1)} : 1</b> ${cr>=4.5?"잘 읽혀요":"4.5 이상으로 올려 주세요"}</p>
+  <div class="colors">${CROLE.map(c=>`<label class="col"><input type="color" data-p="style.${c.k}" value="${HEX(st[c.k])?st[c.k]:"#888888"}" aria-label="${c.n}"><span>${c.n}<small data-hex="${c.k}">${esc(st[c.k])}</small></span></label>`).join("")}</div></div>
+ <div class="g2"><div class="fld" data-f="style.ft"><label class="lab" for="f-ft">제목 글꼴</label><select class="in" id="f-ft" data-p="style.ft">${FONTS.map(f=>`<option value="${f.n}"${st.ft===f.n?" selected":""}>${f.n} · ${f.d}</option>`).join("")}</select>${F("style.ftCustom","직접 입력 (선택)",{input:1,ph:"예: Paperlogy ExtraBold"})}</div>
+ <div class="fld" data-f="style.fb"><label class="lab" for="f-fb">본문 글꼴</label><select class="in" id="f-fb" data-p="style.fb">${FONTS.map(f=>`<option value="${f.n}"${st.fb===f.n?" selected":""}>${f.n} · ${f.d}</option>`).join("")}</select>${F("style.fbCustom","직접 입력 (선택)",{input:1,ph:"예: Pretendard"})}</div></div>
+ <div class="g2"><div class="fld"><div class="lab">모서리</div><div class="seg">${Object.keys(RAD).map(k=>`<button class="${st.rad===k?"on":""}" data-act="rad" data-v="${k}">${RAD[k].n}</button>`).join("")}</div>
+  <div class="lab" style="margin-top:6px">상자 테두리</div><div class="seg"><button class="${st.border?"on":""}" data-act="border" data-v="1">얇은 테두리</button><button class="${!st.border?"on":""}" data-act="border" data-v="0">테두리 없음</button></div></div>
+ <div class="fld" data-f="style.deco"><label class="lab" for="f-deco">장식 모양</label><select class="in" id="f-deco" data-p="style.deco">${DECOS.map(d=>`<option value="${d.v}"${st.deco===d.v?" selected":""}>${d.n}</option>`).join("")}</select>
+  ${F("style.decoNote","장식 규칙 메모",{rows:2,ph:"예: 장식은 모서리에만, 본문을 가리지 않게",ex:["장식은 모서리에만 두고 본문을 가리지 않는다","섹션 장에는 장식을 넣지 않는다"],add:1})}</div></div>`
+ :'<div class="al w">위에서 스타일을 하나 고르면 색·글꼴을 다듬는 칸과 미리보기가 열려요.</div>';
+ return `${lv?"":'<div class="al w">대상역에서 대상을 먼저 고르면 맞춤 추천이 보여요.</div>'}
+ <div class="sec"><span class="tag">고르기</span><b>시작할 스타일</b><span>고른 뒤 얼마든지 바꿀 수 있어요</span></div><div data-f="style.preset">${groups}</div>${edit}`;}
+
+/* ───── 3역 ───── */
+function s3(){const st=curStyle(),o=pvOpts();
+ return `${st?"":'<div class="al w">무드역에서 스타일을 고르면 내 스타일로 미리보기가 그려져요.</div>'}
+ <div class="sec"><span class="tag">세트</span><b>쓸 레이아웃</b><span>${D.lays.length}개 선택 · 6~10개가 알맞아요</span>${D.aud.level?`<button class="btn ghost sm" data-act="laydef">${LV(D.aud.level).n} 추천 세트로 바꾸기</button>`:""}</div>
+ <div class="lays" data-f="lays">${LAYS.map(l=>{const on=D.lays.includes(l.k);return `<button class="lay${on?" on":""}" data-act="laytoggle" data-v="${l.k}">${slide(l.k,st,Object.assign({thumb:1},o))}<span class="lh"><i>${on?"✓":""}</i>${l.n}</span><small>${l.d}</small></button>`;}).join("")}</div>
+ <div class="sec"><span class="tag">메모</span><b>레이아웃마다 꼭 넣을 것</b><span>선택한 것만 보여요 · 비워 둬도 돼요</span></div>
+ <div class="lnotes" data-f="lnotes">${D.lays.length?LAYS.filter(l=>D.lays.includes(l.k)).map(l=>`<div class="lnote"><b>${l.n}</b><input class="in" data-ln="${l.k}" value="${att(D.lnotes[l.k]||"")}" placeholder="예: ${({cover:"학교 로고를 오른쪽 위에",activity:"시간과 준비물을 항상 적는다",quiz:"정답은 다음 장에서 공개",summary:"3줄을 넘기지 않는다",goal:"성취기준 코드를 작게 적는다"})[l.k]||"이 장에서 꼭 지킬 점"}" aria-label="${l.n} 메모"></div>`).join("")
+  :'<div class="empty">위에서 레이아웃을 고르면 메모 칸이 생겨요.</div>'}</div>`;}
+
+/* ───── 4역 ───── */
+function s4(){const sp=specFor(D.aud.level,D.aud.sub),t=D.text;
+ return `${sp?`<div class="al o">${esc(levelName())} 추천값이 들어가 있어요. <button class="btn ghost sm" data-act="spec">추천값으로 다시 채우기</button></div>`:'<div class="al w">대상역에서 대상을 고르면 추천값이 채워져요.</div>'}
+ <div class="sec"><span class="tag">크기</span><b>글자 크기와 분량</b><span>PPT 기준 pt</span></div>
+ <div class="g4">${F("text.titlePt","제목 크기 (pt)",{req:1,input:1,num:1})}${F("text.bodyPt","본문 크기 (pt)",{req:1,input:1,num:1})}${F("text.minPt","가장 작은 글자 (pt)",{input:1,num:1})}${F("text.maxLines","한 장 최대 줄 수",{req:1,input:1,num:1})}</div>
+ <div class="g2">${F("text.maxChars","한 줄 글자 수 (안팎)",{input:1,num:1})}<div class="fld" data-f="text.notes"><div class="lab">발표자 노트</div><div class="seg"><button class="${t.notes==="yes"?"on":""}" data-act="notes" data-v="yes">장마다 넣기</button><button class="${t.notes==="no"?"on":""}" data-act="notes" data-v="no">넣지 않기</button></div></div></div>
+ <div class="sec"><span class="tag">말투</span><b>어떻게 쓸까요?</b></div>
+ <div class="fld" data-f="text.tone"><div class="lab">말투<i class="req">필수</i></div><div class="seg">${TONES.map(x=>`<button class="${t.tone===x.v?"on":""}" data-act="tone" data-v="${x.v}">${x.n}<small style="display:block;font-weight:400;font-size:12px;color:var(--mute)">${x.d}</small></button>`).join("")}</div></div>
+ <div class="fld" data-f="text.icons"><div class="lab">아이콘·이모티콘</div><div class="seg">${ICONS.map(x=>`<button class="${t.icons===x.v?"on":""}" data-act="icons" data-v="${x.v}">${x.n}</button>`).join("")}</div></div>
+ <div class="g2">${F("text.vocab","어휘 수준",{rows:3})}${F("text.images","이미지 쓰는 법",{rows:3})}</div>
+ <div class="sec"><span class="tag">흐름</span><b>수업 흐름과 접근성</b></div>
+ <div class="g3">${F("text.interact","상호작용 주기",{rows:3})}${F("text.flow","시간 배분",{rows:3})}${F("text.a11y","접근성 기준",{rows:3})}</div>`;}
+
+/* ───── 5역 ───── */
+function s5(){const nm=tr(D.style.name)||"이 스타일",lvn=levelName()||"우리 반";
+ return `<div class="sec"><span class="tag">호출</span><b>이렇게 부탁하면 스타일이 적용돼요</b></div>
+ ${F("triggers","호출 문장",{req:1,rows:3,help:"평소 말투 그대로 한 줄에 하나씩, 두 개 이상.",ex:[`${nm} 스타일로 교안 만들어 줘`,`${lvn} 수업 PPT 만들어 줘`,"이 내용으로 수업 슬라이드 짜 줘"],add:1})}
+ <div class="fld"><div class="lab">결과물 형태</div><div class="seg">${[["pptx",".pptx 파일"],["outline","슬라이드 개요 (텍스트)"],["both","개요 확인 후 .pptx"]].map(x=>`<button class="${D.out===x[0]?"on":""}" data-act="out" data-v="${x[0]}">${x[1]}</button>`).join("")}</div></div>
+ <div class="sec"><span class="tag">규칙</span><b>꼭 지킬 것과 하지 말 것</b></div>
+ <div class="g2">${F("rules.must","꼭 지킬 것",{req:1,rows:5,help:"한 줄에 하나씩, 두 개 이상.",ex:["모든 장에 같은 여백과 제목 위치를 쓴다","글이 넘치면 글자를 줄이지 말고 장을 나눈다","정답과 핵심 단어에만 강조 색을 쓴다","표지와 마지막 장에 학교·기관 이름을 넣는다"],add:1})}
+ ${F("rules.never","하지 말 것",{req:1,rows:5,help:"AI 교안에서 거슬렸던 점을 적어 주세요.",ex:["텍스트와 도형을 겹치지 않는다","한 장에 색을 4가지 넘게 쓰지 않는다","출처 없는 이미지나 통계를 넣지 않는다","그라데이션과 그림자를 남발하지 않는다"],add:1})}</div>
+ ${F("dod","완료 기준 (예/아니오로)",{req:1,rows:4,help:"세 개 이상 적어 주세요.",ex:["본문 글자가 최소 크기보다 작은 장이 없다","한 장의 줄 수가 기준을 넘지 않는다","모든 장의 제목 위치가 같다","글자와 배경 대비가 4.5:1 이상이다","선택한 레이아웃만 썼다"],add:1})}
+ <div class="sec"><span class="tag">마무리</span><b>이름 붙이고 시험해 보기</b></div>
+ <div class="g2">${F("slug","스킬 파일 이름 (영문 소문자·하이픈)",{input:1,ph:"예: elem-crayon-slides",ex:[(D.aud.level||"edu")+"-"+(D.style.preset||"style")+"-slides"]})}
+ ${F("tests","테스트 문장",{rows:3,help:"완성 후 이 문장으로 부탁해 보고 완료 기준을 확인해요.",ex:[`${tr(D.aud.topic)||"물의 순환"} 수업 교안 10장 만들어 줘`,"이 강의 원고를 슬라이드로 바꿔 줘 (원고 첨부)"],add:1})}</div>
+ <div class="result" id="result"></div>`;}
+
+/* ───── SKILL.md ───── */
+const slug=()=>tr(D.slug).toLowerCase().replace(/[^a-z0-9-]+/g,"-").replace(/^-+|-+$/g,"")||"my-deck-style";
+const fontLine=(c,n)=>tr(c)?`${tr(c)} (없으면 ${n}, 그다음 맑은 고딕)`:`${n||"Noto Sans KR"} (없으면 맑은 고딕)`;
+function buildMD(){const a=D.aud,s=D.style,t=D.text,L=[],lvn=levelName()||"교육",nm=tr(s.name)||"교안 스타일",trg=lines(D.triggers);
+ let desc=`${lvn} 대상${tr(a.subject)?" "+tr(a.subject):""} 수업용 PPT 교안을 '${nm}' 스타일${tr(s.mood)?"("+tr(s.mood)+")":""}로 만든다. `;
+ if(trg.length)desc+='"'+trg.slice(0,3).join('", "')+'" 같은 요청을 받거나 ';
+ desc=(desc+"이 대상의 수업 슬라이드나 강의안을 만들 때 사용한다.").replace(/\s+/g," ");
+ L.push("---","name: "+slug(),"description: "+desc,"---","","# "+nm,"");
+ L.push(`> 대상: ${lvn}. 이 대상을 위한 PPT 교안 스타일이다. 아래 디자인 시스템과 규칙을 모든 슬라이드에 똑같이 적용한다.`,"");
+ const sec=(h,arr,fmt)=>{fmt=fmt||(x=>"- "+x);if(arr.length){L.push("## "+h);arr.forEach(x=>L.push(fmt(x)));L.push("");}};
+ sec("이럴 때 사용",trg.map(x=>'"'+x+'"'));
+ const info=[];if(lvn)info.push("대상: "+lvn);if(tr(a.subject))info.push("과목·분야: "+tr(a.subject));if(a.format)info.push("수업 형태: "+a.format);
+ if(tr(a.minutes))info.push("한 차시: "+tr(a.minutes));if(tr(a.size))info.push("인원: "+tr(a.size));lines(a.traits).forEach(x=>info.push("학습자 특징: "+x));
+ const sp=specFor(a.level,a.sub);if(sp&&sp.subNote)info.push("세부 대상 규칙: "+sp.subNote);
+ sec("학습자와 수업",info);
+ if(styleSet()){L.push("## 디자인 시스템","","### 색상","| 역할 | 색 | 쓰임 |","|---|---|---|");CROLE.forEach(c=>{if(HEX(s[c.k]))L.push(`| ${c.n} | ${s[c.k].toUpperCase()} | ${c.use} |`);});
+  L.push("",`- 주 색 위의 글자 색: ${onColor(s.pr)}`,`- 본문 글자와 배경 대비: ${contrast(s.tx,s.bg).toFixed(1)}:1`,"- 위 6가지 색 밖의 색은 쓰지 않는다. 사진과 차트 계열색만 예외로 둔다.","");
+  L.push("### 글꼴","- 제목: "+fontLine(s.ftCustom,s.ft),"- 본문: "+fontLine(s.fbCustom,s.fb),"- 숫자와 영문도 같은 글꼴을 쓴다.","");
+  const dn=(DECOS.find(d=>d.v===s.deco)||DECOS[0]).n;
+  L.push("### 모양과 장식","- "+(RAD[s.rad]||RAD.soft).md,"- 상자 테두리: "+(s.border?"주 색을 옅게 한 얇은 선(0.75~1pt)":"테두리 없이 카드 색 면으로 구분"),"- 장식: "+dn);
+  lines(s.decoNote).forEach(x=>L.push("- "+x));if(tr(s.mood))L.push("- 분위기: "+tr(s.mood));L.push("");}
+ L.push("## 슬라이드 규격","- 16:9 (13.333 × 7.5 in), 바깥 여백 0.5 in 이상","- 모든 장에서 제목 위치와 크기를 같게 둔다");
+ if(+t.titlePt)L.push(`- 제목 ${t.titlePt}pt · 본문 ${t.bodyPt||"-"}pt${+t.minPt?` · 가장 작은 글자 ${t.minPt}pt (이보다 작게 쓰지 않는다)`:""}`);
+ if(+t.maxLines)L.push(`- 한 장 본문은 최대 ${t.maxLines}줄${+t.maxChars?`, 한 줄 ${t.maxChars}자 안팎`:""}`);
+ L.push("- 텍스트 상자는 도형 안쪽 여백 0.15 in 이상을 두고, 텍스트와 도형이 서로 겹치지 않게 배치한다","- 글이 넘치면 글자를 줄이지 말고 장을 나눈다","");
+ const ls=LAYS.filter(l=>D.lays.includes(l.k));
+ if(ls.length){L.push(`## 레이아웃 (${ls.length}종, 이 밖의 모양은 쓰지 않는다)`);ls.forEach((l,i)=>{L.push(`${i+1}. **${l.n}**: ${l.md}`);if(tr(D.lnotes[l.k]))L.push("   - 꼭 넣을 것: "+tr(D.lnotes[l.k]));});L.push("");}
+ const w=[];const tn=TONES.find(x=>x.v===t.tone);if(tn)w.push("말투: "+tn.n+" — "+tn.d);
+ lines(t.vocab).forEach(x=>w.push("어휘: "+x));const ic=ICONS.find(x=>x.v===t.icons);if(ic)w.push(ic.md);
+ lines(t.images).forEach(x=>w.push("이미지: "+x));if(t.notes==="yes")w.push("장마다 발표자 노트에 설명할 말과 예상 질문을 적는다");if(t.notes==="no")w.push("발표자 노트는 쓰지 않는다");
+ sec("글쓰기 규칙",w);
+ const fl=[];lines(t.interact).forEach(x=>fl.push("상호작용: "+x));lines(t.flow).forEach(x=>fl.push("시간 배분: "+x));sec("수업 흐름",fl);
+ sec("접근성",lines(t.a11y));
+ sec("반드시 지킬 것",lines(D.rules.must));sec("절대 하지 말 것",lines(D.rules.never));
+ sec("완료 기준 (모두 통과해야 제출한다)",lines(D.dod),x=>"- [ ] "+x);
+ const outs={pptx:["슬라이드를 .pptx 파일로 만들어 건넨다.","만들기 전에 수업 주제, 차시 시간, 원하는 장 수가 빠졌으면 먼저 물어본다."],
+  outline:["먼저 장별 개요(레이아웃 이름, 제목, 본문, 발표자 노트)를 텍스트로 건넨다.","사용자가 요청할 때만 .pptx로 만든다."],
+  both:["먼저 장별 개요(레이아웃 이름, 제목, 핵심 문장)를 보여 주고 확인을 받는다.","확인을 받은 뒤 .pptx 파일로 만든다."]};
+ sec("결과물",outs[D.out]||outs.pptx);
+ sec("테스트 문장",lines(D.tests));
+ return L.join("\n").replace(/\n{3,}/g,"\n\n").trim()+"\n";}
+
+function renderResult(){const el=$("#result");if(!el)return;const all=[];ST.forEach((s,i)=>s.todo.forEach(t=>all.push({t:t.t,f:t.f,ok:t.ok,i:i})));
+ const miss=all.filter(t=>!t.ok()),p=Math.round((all.length-miss.length)/all.length*100);
+ const msg=p>=90?"아주 탄탄해요. 바로 교안을 만들어 보세요!":p>=70?"거의 다 왔어요. 빠진 칸 몇 개만 채우면 훨씬 정확해져요.":"뼈대는 잡혔어요. 빠진 칸을 채울수록 스타일이 또렷해져요.";
+ const st=curStyle(),o=pvOpts(),pick=(D.lays.length?D.lays:["cover","concept","summary"]).slice(0,6);
+ el.innerHTML=`<div class="res-h ac-soft"><div class="ring" style="background:conic-gradient(var(--ac) ${p*3.6}deg,var(--rule) 0)"><b>${p}</b></div><div><h3>교안 스타일 완성도 ${p}점</h3><p>${msg}</p>${miss.length?`<div class="miss">${miss.map(m=>`<button data-jump="${m.i}|${m.f}">${ST[m.i].role} · ${esc(m.t)}</button>`).join("")}</div>`:""}</div></div>
+ <div class="res-prev ac-soft">${pick.map(k=>slide(k,st,Object.assign({thumb:1},o))).join("")}</div>
+ <pre id="md">${esc(buildMD())}</pre>
+ <div class="res-btn"><button class="btn" data-act="publish">라이브러리에 공유</button><button class="btn ghost" data-act="dl">SKILL.md 내려받기</button><button class="btn ghost" data-act="copy">전체 복사</button></div>
+ <div class="howto"><b>이렇게 써 보세요.</b> Claude에서는 <b>${esc(slug())}/</b> 폴더에 SKILL.md를 넣고 zip으로 압축해 설정의 스킬 메뉴에서 올리면 돼요. ChatGPT에서는 GPT나 프로젝트 지침에 내용을 붙여 넣으세요. 테스트 문장으로 교안을 한 번 만들어 보고, 어긋난 점은 '하지 말 것'에 한 줄씩 더해 주세요.</div>`;}
+
+/* ───── 공유 라이브러리 ───── */
+let DB=null,USER=null,MYID=null,libReady=false,libFailed=false,libLevel="";
+let libraryRecords=[],viewCounts={},publishMode="share";
+async function initLibrary(){const c=window.claude;
+ if(!c||typeof c.use!=="function"){libFailed=true;$$('[data-act="library"],[data-act="publish"]').forEach(b=>b.hidden=true);new MutationObserver(()=>$$('[data-act="publish"]').forEach(b=>b.hidden=true)).observe(document.body,{childList:true,subtree:true});return;}
+ try{DB=await c.use("db");}catch(e){DB=null;}
+ try{USER=await c.use("user");}catch(e){USER=null;}
+ if(!DB){libFailed=true;updateLibStatus();return;}
+ try{MYID=USER&&typeof USER.id==="function"?await USER.id():null;}catch(e){MYID=null;}
+ DB.collection("styles").orderBy("created_at","desc").limit(200).onSnapshot(snap=>{
+  libraryRecords=snap.docs.map(d=>Object.assign({id:d.id},d.data()));libReady=true;updateLibStatus();renderLibraryRows();
+ },()=>{libFailed=true;updateLibStatus();});
+ DB.collection("views").onSnapshot(snap=>{const c={};snap.docs.forEach(d=>{const s=d.data().skill;if(s)c[s]=(c[s]||0)+1;});viewCounts=c;
+  $$("[data-skill-count]").forEach(n=>{n.textContent=(viewCounts[n.dataset.skillCount]||0).toLocaleString("ko-KR");});},()=>{});}
+function libraryStatus(m,err){const el=$("#libraryStatus");el.textContent=m;el.classList.toggle("error",!!err);}
+function updateLibStatus(){
+ if(libFailed){libraryStatus("이 화면에서는 공유 라이브러리를 쓸 수 없어요. claude.ai에 로그인한 상태로 열면 사용할 수 있어요. 만든 스타일은 내려받기와 복사로 가져갈 수 있어요.",true);return;}
+ if(!libReady){libraryStatus("라이브러리를 불러오는 중이에요.");return;}
+ const n=libraryRecords.length;libraryStatus(n?`공유된 스타일 ${n}개${n===200?" (최근 200개)":""}`:"아직 공유된 스타일이 없어요. 첫 번째 스타일을 공유해 보세요.");}
+function renderLibFilter(){$("#libFilter").innerHTML=[{k:"",n:"전체"}].concat(LEVELS).map(l=>`<button class="sub${libLevel===l.k?" on":""}" data-act="libLevel" data-v="${l.k}">${l.n}</button>`).join("");}
+function renderLibraryRows(){
+ const q=tr($("#librarySearch").value).toLocaleLowerCase("ko-KR");
+ const rs=libraryRecords.filter(it=>(!libLevel||it.level===libLevel)&&(!q||[it.author_name,it.title,it.description,it.level_name].some(v=>String(v||"").toLocaleLowerCase("ko-KR").includes(q))));
+ $("#libraryList").innerHTML=rs.length?rs.map(it=>{
+  const dt=Date.parse(it.created_at),when=Number.isFinite(dt)?new Date(dt).toLocaleDateString("ko-KR"):"—";
+  return `<tr><td>${esc(it.author_name)}</td><td><button type="button" class="tlink" data-act="viewSkill" data-id="${att(it.id)}" aria-expanded="false">${esc(it.title)}</button></td><td><span class="lvl">${esc(it.level_name||"—")}</span></td><td>${when}</td><td class="num-c" data-skill-count="${att(it.id)}">${(viewCounts[it.id]||0).toLocaleString("ko-KR")}</td><td><button type="button" class="btn ghost sm" data-act="downloadSkill" data-id="${att(it.id)}">내려받기</button></td></tr><tr class="detail" hidden><td colspan="6"></td></tr>`;
+ }).join(""):`<tr><td colspan="6" style="text-align:center;color:var(--mute);padding:22px">${q||libLevel?"조건에 맞는 스타일이 없어요.":(libFailed?"라이브러리를 열 수 없어요.":"공유된 스타일이 없어요.")}</td></tr>`;}
+function safeStyle(x){if(!x||typeof x!=="object")return null;const o={};["bg","sf","pr","acc","tx","mu"].forEach(k=>{o[k]=HEX(x[k])?x[k]:"#888888";});
+ o.ft=FONTS.some(f=>f.n===x.ft)?x.ft:"Noto Sans KR";o.fb=FONTS.some(f=>f.n===x.fb)?x.fb:"Noto Sans KR";o.rad=RAD[x.rad]?x.rad:"soft";o.deco=DECOS.some(d=>d.v===x.deco)?x.deco:"none";o.border=!!x.border;return o;}
+function toggleSkill(id,btn){const row=btn.closest("tr"),det=row.nextElementSibling;if(!det)return;const it=libraryRecords.find(r=>r.id===id);
+ const open=det.hidden;det.hidden=!open;btn.setAttribute("aria-expanded",String(open));
+ if(open&&it&&!det.dataset.done){const st=safeStyle(it.style);det.firstElementChild.innerHTML=`<p>${esc(it.description)}</p><div class="dgrid"><div style="display:flex;flex-direction:column;gap:8px">${st?slide("cover",st,{thumb:1,topic:it.title,label:it.level_name||""})+slide("concept",st,{thumb:1,topic:"개념 설명"}):""}</div><pre></pre></div>`;det.querySelector("pre").textContent=it.skill_md||"";det.dataset.done="1";}
+ if(open&&DB&&MYID){DB.collection("views").doc(id+"__"+MYID).set({skill:id,at:new Date().toISOString()}).catch(()=>{});}}
+async function saveFile(name,text){let dl=null;try{dl=window.claude&&await window.claude.use("downloads");}catch(e){dl=null;}
+ if(!dl){try{const u=URL.createObjectURL(new Blob([text],{type:"text/markdown;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove();},500);return true;}catch(e){copyText(text,"파일 저장이 막혀 있어 내용을 복사했어요. 메모장에 붙여 넣고 SKILL.md로 저장해 주세요.");return false;}}
+ try{await dl.save({filename:name,data:new Blob([text],{type:"text/markdown;charset=utf-8"})});return true;}
+ catch(e){if(e&&e.code==="declined")toast("내려받기를 취소했어요.");else toast("파일을 저장하지 못했어요. [전체 복사]로 내용을 가져가 주세요.");return false;}}
+async function downloadLibrarySkill(id){const it=libraryRecords.find(r=>r.id===id);if(!it)return;
+ const fn=(String(it.title||"SKILL").replace(/[\\/:*?"<>|]/g,"-").trim()||"SKILL")+".md";if(await saveFile(fn,it.skill_md))toast("스타일 파일을 내려받았어요.");}
+function libraryDescription(){return ([levelName(),tr(D.aud.subject),tr(D.style.mood)].filter(Boolean).join(" · ")||"교육용 PPT 교안 스타일").slice(0,500);}
+function openLibrary(){$("#librarySearch").value="";renderLibFilter();updateLibStatus();renderLibraryRows();$("#libraryDialog").showModal();}
+function openPublish(mode){publishMode=mode||"share";
+ if(publishMode==="share"){const inc=ST.findIndex(s=>s.todo.some(t=>t.req&&!t.ok()));
+  if(inc>=0){const it=ST[inc].todo.find(t=>t.req&&!t.ok());jump(inc,it.f);toast("필수 항목을 모두 채운 뒤 공유할 수 있어요.");return;}}
+ $("#publishAuthor").value=tr(D.who);$("#publishTitleInput").value=(tr(D.style.name)||"나의 교안 스타일").slice(0,120);$("#publishDescription").value=libraryDescription();$("#publishWebsite").value="";
+ const dlm=publishMode==="download";
+ $("#publishTitle").textContent=dlm?"라이브러리에 저장하고 내려받기":"라이브러리에 공유하기";
+ $("#publishHint").textContent=dlm?"라이브러리에 저장한 뒤 SKILL.md를 내려받아요. 공유하지 않으려면 [저장 없이 내려받기]를 눌러 주세요.":"작성자 이름은 로그인으로 확인되지 않아요.";
+ const can=!!DB&&!libFailed;
+ $("#publishError").textContent=can?"":"이 화면에서는 라이브러리를 쓸 수 없어요. claude.ai에 로그인한 상태로 열어 주세요.";
+ $("#publishSubmit").textContent=dlm?"저장 후 내려받기":"공유하기";$("#publishSubmit").disabled=!can;$("#downloadLocal").hidden=!dlm;
+ $("#publishDialog").showModal();if(!tr(D.who))$("#publishAuthor").focus();}
+async function publishSkill(){const err=$("#publishError"),sub=$("#publishSubmit");
+ if(!DB){err.textContent="라이브러리에 연결되어 있지 않아요.";return;}
+ if($("#publishWebsite").value)return;
+ const s=D.style,p={author_name:tr($("#publishAuthor").value).slice(0,50),title:tr($("#publishTitleInput").value).slice(0,120),description:tr($("#publishDescription").value).slice(0,500),slug:slug().slice(0,80),skill_md:buildMD(),
+  level:D.aud.level||"",level_name:levelName(),style:styleSet()?{bg:s.bg,sf:s.sf,pr:s.pr,acc:s.acc,tx:s.tx,mu:s.mu,ft:s.ft,fb:s.fb,rad:s.rad,deco:s.deco,border:!!s.border}:null};
+ if(!p.author_name||!p.title||!p.description){err.textContent="작성자 이름, 스타일 이름, 설명을 모두 적어 주세요.";return;}
+ if(new TextEncoder().encode(p.skill_md).length>30000){err.textContent="SKILL.md가 30KB를 넘어요. 내용을 줄인 뒤 다시 시도해 주세요.";return;}
+ if(libraryRecords.some(r=>String(r.author_name||"").toLowerCase()===p.author_name.toLowerCase()&&r.slug===p.slug)){err.textContent="같은 작성자와 파일 이름으로 등록된 스타일이 이미 있어요. 완성역의 스킬 파일 이름을 바꿔 주세요.";return;}
+ p.created_at=new Date().toISOString();if(MYID)p.author_id=MYID;
+ sub.disabled=true;sub.textContent="저장 중…";err.textContent="";
+ try{await DB.collection("styles").add(p);D.who=D.who||p.author_name;save();$("#publishDialog").close();
+  if(publishMode==="download"){if(await saveFile("SKILL.md",p.skill_md))toast("라이브러리에 저장하고 SKILL.md를 내려받았어요.");}
+  else{openLibrary();toast(`[${esc(p.title)}] 스타일을 라이브러리에 공유했어요.`);}
+ }catch(e){err.textContent=e&&e.code==="invalid_argument"?"이 화면에서는 라이브러리에 쓸 권한이 없어요. 공유한 사람에게 참여 권한을 요청하거나 [저장 없이 내려받기]를 이용해 주세요.":"저장하지 못했어요. 연결 상태를 확인한 뒤 다시 시도해 주세요.";$("#downloadLocal").hidden=false;}
+ finally{sub.disabled=false;sub.textContent=publishMode==="download"?"저장 후 내려받기":"공유하기";}}
+
+/* ───── 화면 ───── */
+const R=[s1,s2,s3,s4,s5];
+const reqOk=i=>ST[i].todo.filter(t=>t.req).every(t=>t.ok());
+function totalPct(){let a=0,o=0;ST.forEach(s=>s.todo.forEach(t=>{a++;if(t.ok())o++;}));return Math.round(o/a*100);}
+function lineHTML(){return `<div class="run" style="width:0"></div>`+ST.map((x,i)=>`<button class="stn${i===D.cur?" cur":""}" data-go="${i}" style="--sc:var(${x.col})"><span class="dot">${x.g.slice(0,1)}</span><span class="nm">${i+1}. ${x.role}</span><span class="sub">${x.g} · ${x.out}</span></button>`).join("");}
+function renderTodo(){const s=ST[D.cur],d=s.todo.filter(t=>t.ok()).length,el=$("#todo");if(!el)return;
+ el.innerHTML=`<h4><span>이번 역에서 할 일</span><span>${d}/${s.todo.length}</span></h4><ul>${s.todo.map(t=>`<li class="${t.ok()?"y":""}" data-jump="${D.cur}|${t.f}" tabindex="0"><i></i>${esc(t.t)}${t.req?"<em>필수</em>":""}</li>`).join("")}</ul>`;}
+function renderMini(){const el=$("#miniPv");if(!el)return;const st=curStyle();el.hidden=!st||D.cur===1;if(st)el.lastElementChild.innerHTML=slide(D.cur===2?"cover":D.pv,st,Object.assign({thumb:1},pvOpts()));}
+function render(keep){if(!(D.cur>=0&&D.cur<5))D.cur=0;
+ const s=ST[D.cur],y=window.scrollY;document.documentElement.style.setProperty("--ac",`var(${s.col})`);
+ $("#rail").innerHTML=lineHTML();
+ $("#me").innerHTML=D.started?`<span style="width:26px;height:26px;display:inline-flex">${(HERO[D.hero]||HERO.f).svg}</span>${esc(D.who||"참가자")}`:"";
+ $("#guide").innerHTML=`<div class="master"><span class="av">${s.g.slice(0,1)}</span><div><small>${D.cur+1}번째 역 · ${s.role}</small><b>${s.who}</b></div></div><div class="bubble">${s.say(D.who)}</div><div class="todo" id="todo"></div><div class="mini" id="miniPv" hidden><small>내 스타일 미리보기${tr(D.style.name)?" · "+esc(D.style.name):""}</small><div></div></div><details class="tips"${D.cur===0?" open":""}><summary>막힐 때 보는 팁</summary><ul>${s.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></details>`;
+ $("#work").innerHTML=`<div class="wh"><span class="no">${String(D.cur+1).padStart(2,"0")}</span><div><h2>${s.title}</h2><p>${s.sub}</p></div><span class="time">약 ${s.time}분 · 결과: ${s.out}</span></div><div class="wb">${R[D.cur]()}</div>
+ <div class="foot" id="foot">${D.cur?'<button class="btn ghost" data-act="prev">← 이전 역</button>':""}<span id="gate"></span>${D.cur<4?`<button class="btn" data-act="next">다음: ${ST[D.cur+1].role} →</button>`:'<button class="btn" data-act="dl">SKILL.md 내려받기</button>'}</div>`;
+ window.scrollTo(0,keep?y:0);refresh();}
+function refresh(){const done=ST.map((_,i)=>reqOk(i));
+ $$("#rail .stn").forEach((n,i)=>n.classList.toggle("done",done[i]));
+ let k=-1;for(let i=0;i<5;i++){if(done[i])k=i;else break;}
+ const run=$("#rail .run");if(run)run.style.width=(k<=0?0:k/4*80)+"%";
+ $("#pct").textContent="전체 "+totalPct()+"%";renderTodo();renderMini();
+ const g=$("#gate");if(g){const m=ST[D.cur].todo.filter(t=>t.req&&!t.ok());g.className=m.length?"":"ok";g.textContent=m.length?`필수 ${m.length}개 남음 · ${m[0].t}`:"필수 항목을 다 채웠어요. 다음 역으로 가도 좋아요!";}
+ renderResult();}
+/* 색·글꼴만 바뀔 때 전체를 다시 그리지 않고 미리보기만 갱신 */
+function refreshStyle(){const b=$("#pvBox");if(b)b.innerHTML=slide(D.pv,D.style,pvOpts());
+ CROLE.forEach(c=>{const h=$(`[data-hex="${c.k}"]`);if(h)h.textContent=D.style[c.k];});
+ const cv=$("#crv");if(cv&&styleSet()){const cr=contrast(D.style.tx,D.style.bg);cv.textContent=cr.toFixed(1)+" : 1";cv.style.color=cr>=4.5?"var(--ok)":"var(--warn)";cv.nextSibling.textContent=" "+(cr>=4.5?"잘 읽혀요":"4.5 이상으로 올려 주세요");}
+ refresh();}
+function flash(el){if(!el)return;el.classList.remove("pulse");void el.offsetWidth;el.classList.add("pulse");}
+function jump(i,f){if(+i!==D.cur){D.cur=+i;save();render();}
+ setTimeout(()=>{const el=document.querySelector(`[data-f="${f}"]`);if(!el)return;el.scrollIntoView({behavior:"smooth",block:"center"});flash(el);
+  const inp=el.querySelector("input:not([type=color]),textarea");if(inp&&!inp.value)setTimeout(()=>inp.focus({preventScroll:true}),400);},60);}
+function toast(m){const o=$(".toast");if(o)o.remove();document.body.insertAdjacentHTML("beforeend",`<div class="toast" role="status">${m}</div>`);const e=$(".toast");setTimeout(()=>{if(e)e.remove();},2800);}
+function ask(msg){return new Promise(res=>{const d=$("#askDialog");$("#askText").textContent=msg;
+ const done=v=>{d.close();$("#askYes").onclick=$("#askNo").onclick=null;res(v);};$("#askYes").onclick=()=>done(true);$("#askNo").onclick=()=>done(false);d.showModal();});}
+
+function openIntro(){$("#intro").hidden=false;$("#iname").value=D.who||"";
+ $$(".hero").forEach(h=>h.classList.toggle("on",h.dataset.hero===D.hero));$("#startBtn").textContent=D.started?"이어서 하기":"출발하기";}
+$("#heroF").innerHTML=HERO.f.svg+HERO.f.n;$("#heroM").innerHTML=HERO.m.svg+HERO.m.n;
+$("#introStrip").innerHTML=["crayon","mint","navygold","biz","keynote"].map(k=>{const p=PRESETS.find(x=>x.k===k),L=LV(p.lv);
+ return `<div>${slide("cover",Object.assign({},p.c,{ft:p.ft,fb:p.fb,rad:p.rad,deco:p.deco,border:p.border}),{thumb:1,topic:L.topic,label:L.subject})}${L.n} · ${p.n}</div>`;}).join("");
+
+const TOUR=[["#rail","지금 어느 역에 있는지 노선도에서 보여요. 필수 칸을 다 채운 역은 색이 꽉 차고, 누르면 언제든 오갈 수 있어요."],
+ ["#guide .bubble","역마다 역장이 무엇을 하면 되는지 먼저 알려 드려요."],
+ ["#todo","이번 역에서 할 일이에요. 칸을 채우면 저절로 체크되고, 항목을 누르면 그 칸으로 이동해요."],
+ ["#work .wb","여기서 고르고 적으면 돼요. 스타일을 고른 뒤에는 슬라이드 미리보기가 계속 따라다녀요."],
+ ["#foot","다 채우면 여기서 다음 역으로 넘어가요. 모든 내용은 자동 저장돼요."]];
+let tI=-1;
+function tour(){tI=0;D.toured=true;save();window.scrollTo(0,0);showTour();}
+function showTour(){["#spot","#tip","#tourBlock"].forEach(s=>{const e=$(s);if(e)e.remove();});if(tI<0||tI>=TOUR.length){tI=-1;return;}
+ const sel=TOUR[tI][0],txt=TOUR[tI][1],t=$(sel);if(!t){tI++;showTour();return;}
+ t.scrollIntoView({block:"nearest"});const r=t.getBoundingClientRect(),hh=Math.min(r.height,innerHeight-Math.max(r.top,0)-20);
+ document.body.insertAdjacentHTML("beforeend",`<div id="tourBlock"></div><div id="spot" style="left:${r.left-6}px;top:${r.top-6}px;width:${r.width+12}px;height:${hh+12}px"></div><div id="tip"><div class="tn">안내 ${tI+1} / ${TOUR.length}</div>${txt}<div class="tb"><button class="btn ghost sm" data-act="tskip">건너뛰기</button><button class="btn sm" data-act="tnext">${tI===TOUR.length-1?"시작할게요":"다음"}</button></div></div>`);
+ const tp=$("#tip"),w=Math.min(320,innerWidth-20),h=tp.offsetHeight;let x=r.left,yy=r.bottom+14;
+ if(yy+h>innerHeight-10)yy=r.top-h-14;if(yy<10){yy=Math.min(innerHeight-h-20,Math.max(r.top,0)+40);x=r.right-w-20;}
+ tp.style.left=Math.max(10,Math.min(x,innerWidth-w-10))+"px";tp.style.top=Math.max(10,yy)+"px";}
+
+function usePreset(k){const p=PRESETS.find(x=>x.k===k);if(!p)return;const s=D.style;
+ Object.assign(s,p.c,{preset:k,ft:p.ft,fb:p.fb,rad:p.rad,deco:p.deco,border:p.border});
+ if(!tr(s.mood))s.mood=p.mood;if(!tr(s.name))s.name=p.n+" (내 버전)";}
+function loadDemo(){const who=D.who,hero=D.hero;D=blank();D.who=who||"JUN";D.hero=hero||"f";D.started=true;D.toured=true;
+ D.aud={level:"mid",sub:"m23",subject:"정보 · 인공지능 기초",topic:"인공지능은 어떻게 배울까?",format:"활동·실습형",minutes:"45분",size:"28명",traits:"집중 시간이 15분 정도다\n태블릿으로 자료를 함께 본다\n사전 지식 차이가 크다"};
+ usePreset("mint");D.style.name="2학년 정보 민트 교안";D.style.mood="상쾌하고 세련된, 실험실 같은";D.style.acc="#FF6A5C";
+ D.style.decoNote="장식은 오른쪽 위 모서리에만 둔다\n섹션 장에는 장식을 넣지 않는다";
+ D.lays=LDEF.mid.slice();D.lnotes={cover:"오른쪽 위에 학교 이름을 작게",activity:"활동 시간과 준비물을 항상 적는다",quiz:"정답은 다음 장에서 공개한다",summary:"3줄을 넘기지 않는다"};
+ applySpec(true);D.text.interact="10~15분마다 질문, 퀴즈, 모둠 활동을 넣는다\n개념 설명 2장마다 확인 퀴즈 1장";
+ D.out="both";D.triggers="2학년 정보 민트 교안 스타일로 만들어 줘\n중학교 정보 수업 PPT 만들어 줘\n이 차시 내용으로 수업 슬라이드 짜 줘";
+ D.rules={must:"모든 장에 같은 여백과 제목 위치를 쓴다\n글이 넘치면 글자를 줄이지 말고 장을 나눈다\n정답과 핵심 단어에만 강조 색을 쓴다",never:"텍스트와 도형을 겹치지 않는다\n한 장에 색을 4가지 넘게 쓰지 않는다\n출처 없는 이미지나 통계를 넣지 않는다"};
+ D.dod="본문 글자가 20pt보다 작은 장이 없다\n한 장의 줄 수가 4줄을 넘지 않는다\n모든 장의 제목 위치가 같다\n선택한 레이아웃만 썼다";
+ D.slug="mid-info-mint-slides";D.tests="인공지능은 어떻게 배울까? 45분 수업 교안 12장 만들어 줘\n지도학습과 비지도학습 비교 슬라이드 3장만 만들어 줘";D.cur=4;save();}
+
+function copyText(t,okMsg){
+ const fb=()=>{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand("copy");}catch(e){}a.remove();
+  if(ok)toast(okMsg||"복사했어요!");else{toast("복사가 막혔어요. 아래 글상자에서 직접 선택해 복사해 주세요.");const md=$("#md");if(md){const r=document.createRange();r.selectNodeContents(md);const s=getSelection();s.removeAllRanges();s.addRange(r);}}};
+ try{if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast(okMsg||"복사했어요!"),fb);else fb();}catch(e){fb();}}
+
+let warned=-1;
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-act],[data-go],[data-hero],[data-jump],.chip[data-p]");if(!b)return;
+ if(b.dataset.jump!=null){const q=b.dataset.jump.split("|");jump(q[0],q[1]);return;}
+ if(b.dataset.go!=null){D.cur=+b.dataset.go;warned=-1;save();render();return;}
+ if(b.dataset.hero){D.hero=b.dataset.hero;save();$$(".hero").forEach(h=>h.classList.toggle("on",h.dataset.hero===D.hero));return;}
+ if(b.dataset.p&&!b.dataset.act){const p=b.dataset.p,v=b.dataset.v,cur=String(getP(p)||"");
+  setP(p,b.dataset.add&&tr(cur)?(cur.includes(v)?cur:cur.replace(/\s+$/,"")+"\n"+v):v);save();render(true);return;}
+ const a=b.dataset.act,v=b.dataset.v;
+ if(a==="library")openLibrary();
+ else if(a==="closeLibrary")$("#libraryDialog").close();
+ else if(a==="libLevel"){libLevel=v;renderLibFilter();renderLibraryRows();}
+ else if(a==="viewSkill")toggleSkill(b.dataset.id,b);
+ else if(a==="downloadSkill")downloadLibrarySkill(b.dataset.id);
+ else if(a==="publish")openPublish("share");
+ else if(a==="closePublish")$("#publishDialog").close();
+ else if(a==="start"){if(!D.hero){toast("함께 탈 승객 캐릭터를 먼저 골라 주세요.");flash($("#heroes"));return;}
+  D.who=tr($("#iname").value);D.started=true;save();$("#intro").hidden=true;render();
+  if(!D.toured)setTimeout(tour,350);else toast(`${esc(D.who||"참가자")}님, 다시 오셨네요. 이어서 가 볼까요?`);}
+ else if(a==="tour"){$("#intro").hidden=true;tour();}
+ else if(a==="tnext"){tI++;showTour();}
+ else if(a==="tskip"){tI=-1;showTour();}
+ else if(a==="demo"){if((D.aud.level||D.style.preset)&&!(await ask("지금 적은 내용이 예시로 바뀌어요. 괜찮으세요?")))return;loadDemo();$("#intro").hidden=true;render();toast("중등 정보 수업 예시를 불러왔어요. 노선도의 역을 눌러 둘러보세요.");}
+ else if(a==="reset"){if(!(await ask("처음부터 다시 할까요? 적은 내용이 모두 지워져요.")))return;D=blank();save();render();openIntro();}
+ else if(a==="level"){const ch=D.aud.level!==v;D.aud.level=v;if(ch){D.aud.sub="";if(!D.lays.length)D.lays=LDEF[v].slice();}save();render(true);}
+ else if(a==="sub"){D.aud.sub=v;const first=!tr(D.text.titlePt);applySpec(false);save();render(true);toast(first?`${esc(levelName())} 추천 글자 크기와 규칙을 글쓰기역에 채워 두었어요.`:`${esc(levelName())}(으)로 정했어요.`);}
+ else if(a==="format"){D.aud.format=D.aud.format===v?"":v;save();render(true);}
+ else if(a==="preset"){usePreset(v);save();render(true);setTimeout(()=>{const s=$("#stage");if(s)s.scrollIntoView({behavior:"smooth",block:"start"});},60);}
+ else if(a==="pv"){D.pv=v;save();$$("#stage .seg button").forEach(x=>x.classList.toggle("on",x.dataset.v===v));refreshStyle();}
+ else if(a==="rad"){D.style.rad=v;save();render(true);}
+ else if(a==="border"){D.style.border=v==="1";save();render(true);}
+ else if(a==="laytoggle"){const i=D.lays.indexOf(v);if(i>=0)D.lays.splice(i,1);else{D.lays.push(v);D.lays.sort((x,y)=>LAYS.findIndex(l=>l.k===x)-LAYS.findIndex(l=>l.k===y));}save();render(true);}
+ else if(a==="laydef"){D.lays=LDEF[D.aud.level].slice();save();render(true);toast("추천 레이아웃 세트로 바꿨어요.");}
+ else if(a==="spec"){applySpec(true);save();render(true);toast("추천값으로 다시 채웠어요.");}
+ else if(a==="notes"){D.text.notes=v;save();render(true);}
+ else if(a==="tone"){D.text.tone=v;save();render(true);}
+ else if(a==="icons"){D.text.icons=v;save();render(true);}
+ else if(a==="out"){D.out=v;save();render(true);}
+ else if(a==="prev"){D.cur--;warned=-1;save();render();}
+ else if(a==="next"){const m=ST[D.cur].todo.filter(t=>t.req&&!t.ok());
+  if(m.length&&warned!==D.cur){warned=D.cur;toast(`아직 채우지 않은 필수 칸이 ${m.length}개 있어요. 그래도 가려면 한 번 더 눌러 주세요.`);jump(D.cur,m[0].f);return;}
+  warned=-1;D.cur++;save();render();toast(`${ST[D.cur].role}에 도착했어요. ${ST[D.cur].who}의 안내부터 읽어 볼까요?`);}
+ else if(a==="dl"){if(libFailed){if(await saveFile("SKILL.md",buildMD()))toast("SKILL.md를 내려받았어요.");}else openPublish("download");}
+ else if(a==="copy")copyText(buildMD());
+});
+$("#publishForm").addEventListener("submit",e=>{e.preventDefault();publishSkill();});
+$("#downloadLocal").addEventListener("click",async()=>{$("#publishDialog").close();if(await saveFile("SKILL.md",buildMD()))toast("SKILL.md를 라이브러리에 저장하지 않고 내려받았어요.");});
+["libraryDialog","publishDialog"].forEach(id=>$("#"+id).addEventListener("click",e=>{if(e.target===e.currentTarget)e.currentTarget.close();}));
+const STYLEP=/^style\.(bg|sf|pr|acc|tx|mu|ftCustom|fbCustom)$/;
+document.addEventListener("input",e=>{const el=e.target;if(el.tagName==="SELECT")return;
+ if(el.id==="librarySearch"){renderLibraryRows();return;}
+ if(el.dataset.ln){D.lnotes[el.dataset.ln]=el.value;save();refresh();return;}
+ if(!el.dataset.p)return;setP(el.dataset.p,el.value);save();
+ if(STYLEP.test(el.dataset.p)||/^aud\.(topic|subject)$/.test(el.dataset.p)||el.dataset.p==="style.name"){refreshStyle();}else refresh();});
+document.addEventListener("change",e=>{const el=e.target;if(el.tagName!=="SELECT")return;if(!el.dataset.p)return;setP(el.dataset.p,el.value);save();render(true);});
+document.addEventListener("keydown",e=>{const id=e.target.id;
+ if(e.key==="Enter"&&id==="iname"){e.preventDefault();$("#startBtn").click();}
+ if(e.key==="Enter"&&e.target.matches(".todo li")){e.target.click();}
+ if(e.key==="Escape"&&tI>=0){tI=-1;showTour();}});
+window.addEventListener("resize",()=>{if(tI>=0)showTour();});
+
+render();openIntro();initLibrary();
+</script>
+
+</body>
+</html>
